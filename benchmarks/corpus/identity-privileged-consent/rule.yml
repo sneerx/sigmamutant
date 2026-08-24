@@ -1,0 +1,25 @@
+title: Synthetic Privileged Application Consent
+id: 10000000-0000-4000-8000-000000000014
+status: test
+description: Synthetic normalized identity-provider audit benchmark rule.
+author: SigmaMutant contributors
+date: 2026-08-24
+logsource:
+  category: identity
+detection:
+  selection:
+    operation:
+      - AddAppRoleAssignment
+      - ConsentToApplication
+    permission|contains:
+      - 'Directory.ReadWrite.All'
+      - 'Mail.ReadWrite'
+    actor_type:
+      - user
+      - service_principal
+  filter_automation:
+    actor|startswith: 'approved-consent-automation-'
+  condition: selection and not filter_automation
+falsepositives:
+  - Synthetic benchmark only
+level: high

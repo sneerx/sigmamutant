@@ -1,0 +1,9 @@
+# Direct dependency versions used for the reproducible evaluation and bundled
+# examples. This is a tested constraints set, not a transitive lock file.
+azuma==0.7.3
+openai==2.54.0
+pydantic==2.13.4
+pysigma==1.5.0
+rich==14.3.4
+ruamel.yaml==0.18.17
+typer==0.27.1

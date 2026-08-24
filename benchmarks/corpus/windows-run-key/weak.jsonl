@@ -1,0 +1,2 @@
+{"id":"positive-minimal","expected":true,"event":{"EventType":"SetValue","TargetObject":"\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\","Details":"powershell.exe","Image":"reg.exe"}}
+{"id":"negative-distant","expected":false,"event":{"EventType":"DeleteValue","TargetObject":"HKCU\\Software\\Example","Details":"notepad.exe","Image":"reg.exe"}}

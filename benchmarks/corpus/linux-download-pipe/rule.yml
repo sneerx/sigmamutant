@@ -1,0 +1,26 @@
+title: Synthetic Download Piped to Linux Shell
+id: 10000000-0000-4000-8000-000000000002
+status: test
+description: Synthetic benchmark rule; strings are inert and are never executed.
+author: SigmaMutant contributors
+date: 2026-08-24
+logsource:
+  category: process_creation
+  product: linux
+detection:
+  selection:
+    Image|endswith:
+      - '/curl'
+      - '/wget'
+    CommandLine|contains:
+      - ' | sh'
+      - ' | bash'
+    ParentImage|endswith:
+      - '/sshd'
+      - '/cron'
+  filter_account:
+    User|startswith: 'svc_approved_'
+  condition: selection and not filter_account
+falsepositives:
+  - Synthetic benchmark only
+level: high

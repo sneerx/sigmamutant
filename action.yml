@@ -1,0 +1,104 @@
+name: SigmaMutant mutation gate
+description: Mutation-test Sigma detection fixtures and enforce their suite thresholds.
+
+branding:
+  icon: shield
+  color: purple
+
+inputs:
+  target:
+    description: Suite file or directory containing named SigmaMutant suites.
+    required: true
+  output:
+    description: Directory for aggregate and per-suite evidence.
+    required: false
+    default: artifacts/sigmamutant
+  recursive:
+    description: Discover named suite files in nested directories.
+    required: false
+    default: "false"
+  verbose:
+    description: Emit value-free progress for suites, mutants, and artifacts.
+    required: false
+    default: "false"
+  python-version:
+    description: Supported Python version used to run SigmaMutant.
+    required: false
+    default: "3.12"
+
+outputs:
+  summary-json:
+    description: Path to the aggregate machine-readable summary.
+    value: ${{ steps.paths.outputs.summary-json }}
+  summary-html:
+    description: Path to the standalone aggregate HTML report.
+    value: ${{ steps.paths.outputs.summary-html }}
+  junit-xml:
+    description: Path to the aggregate JUnit report.
+    value: ${{ steps.paths.outputs.junit-xml }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install the pinned SigmaMutant release
+      shell: bash
+      run: >-
+        python -m pip install
+        -c "${GITHUB_ACTION_PATH}/constraints-demo.txt"
+        "${GITHUB_ACTION_PATH}"
+
+    - name: Run the mutation gate
+      shell: bash
+      env:
+        SIGMAMUTANT_TARGET: ${{ inputs.target }}
+        SIGMAMUTANT_OUTPUT: ${{ inputs.output }}
+        SIGMAMUTANT_RECURSIVE: ${{ inputs.recursive }}
+        SIGMAMUTANT_VERBOSE: ${{ inputs.verbose }}
+      run: |
+        if [ -z "${SIGMAMUTANT_TARGET}" ] || [ -z "${SIGMAMUTANT_OUTPUT}" ]; then
+          echo "error: target and output must be non-empty" >&2
+          exit 2
+        fi
+        case "${SIGMAMUTANT_OUTPUT}" in
+          *$'\n'*|*$'\r'*) echo "error: output cannot contain a newline" >&2; exit 2 ;;
+        esac
+        case "${SIGMAMUTANT_RECURSIVE}" in
+          true|false) ;;
+          *) echo "error: recursive must be 'true' or 'false'" >&2; exit 2 ;;
+        esac
+        case "${SIGMAMUTANT_VERBOSE}" in
+          true|false) ;;
+          *) echo "error: verbose must be 'true' or 'false'" >&2; exit 2 ;;
+        esac
+
+        args=(check "${SIGMAMUTANT_TARGET}" --out "${SIGMAMUTANT_OUTPUT}")
+        if [ "${SIGMAMUTANT_RECURSIVE}" = "true" ]; then
+          args+=(--recursive)
+        fi
+        if [ "${SIGMAMUTANT_VERBOSE}" = "true" ]; then
+          args+=(--verbose)
+        fi
+        python -m sigmamutant "${args[@]}"
+
+    - name: Publish evidence paths
+      if: always()
+      id: paths
+      shell: bash
+      env:
+        SIGMAMUTANT_OUTPUT: ${{ inputs.output }}
+      run: |
+        if [ -z "${SIGMAMUTANT_OUTPUT}" ]; then
+          echo "error: output must be non-empty" >&2
+          exit 2
+        fi
+        case "${SIGMAMUTANT_OUTPUT}" in
+          *$'\n'*|*$'\r'*) echo "error: output cannot contain a newline" >&2; exit 2 ;;
+        esac
+        printf 'summary-json=%s/summary.json\n' "${SIGMAMUTANT_OUTPUT}" >> "${GITHUB_OUTPUT}"
+        printf 'summary-html=%s/summary.html\n' "${SIGMAMUTANT_OUTPUT}" >> "${GITHUB_OUTPUT}"
+        printf 'junit-xml=%s/junit.xml\n' "${SIGMAMUTANT_OUTPUT}" >> "${GITHUB_OUTPUT}"

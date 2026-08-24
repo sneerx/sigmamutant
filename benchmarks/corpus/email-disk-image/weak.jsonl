@@ -1,0 +1,2 @@
+{"id":"positive-minimal","expected":true,"event":{"attachment_name":".iso","sender_domain":".sender.invalid","delivery_action":"delivered","recipient":"alice"}}
+{"id":"negative-distant","expected":false,"event":{"attachment_name":"report.pdf","sender_domain":"partner.example","delivery_action":"delivered","recipient":"alice"}}

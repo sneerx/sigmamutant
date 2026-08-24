@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "name": "SigmaMutant synthetic multi-domain fixture-quality corpus v1",
+  "data_classification": "synthetic-inert-no-production-telemetry",
+  "cases": [
+    {
+      "id": "windows-powershell",
+      "domain": "Windows process creation",
+      "purpose": "Encoded PowerShell with an approved-parent exclusion",
+      "weak_suite": "corpus/windows-powershell/weak-suite.yml",
+      "strong_suite": "corpus/windows-powershell/strong-suite.yml"
+    },
+    {
+      "id": "linux-download-pipe",
+      "domain": "Linux process creation",
+      "purpose": "Downloaded content piped to a shell with service-account filtering",
+      "weak_suite": "corpus/linux-download-pipe/weak-suite.yml",
+      "strong_suite": "corpus/linux-download-pipe/strong-suite.yml"
+    },
+    {
+      "id": "web-path-traversal",
+      "domain": "Web access logs",
+      "purpose": "Traversal tokens in failed requests with scanner filtering",
+      "weak_suite": "corpus/web-path-traversal/weak-suite.yml",
+      "strong_suite": "corpus/web-path-traversal/strong-suite.yml"
+    },
+    {
+      "id": "dns-tunnel",
+      "domain": "DNS query logs",
+      "purpose": "Long TXT or NULL queries to synthetic tunnelling suffixes",
+      "weak_suite": "corpus/dns-tunnel/weak-suite.yml",
+      "strong_suite": "corpus/dns-tunnel/strong-suite.yml"
+    },
+    {
+      "id": "windows-run-key",
+      "domain": "Windows registry events",
+      "purpose": "Script interpreters written to Run or RunOnce persistence keys",
+      "weak_suite": "corpus/windows-run-key/weak-suite.yml",
+      "strong_suite": "corpus/windows-run-key/strong-suite.yml"
+    },
+    {
+      "id": "cloud-audit-disable",
+      "domain": "Cloud audit logs",
+      "purpose": "Audit logging disable operations with deployment-role filtering",
+      "weak_suite": "corpus/cloud-audit-disable/weak-suite.yml",
+      "strong_suite": "corpus/cloud-audit-disable/strong-suite.yml"
+    },
+    {
+      "id": "authentication-spray",
+      "domain": "Authentication logs",
+      "purpose": "Burst failed authentication activity from a single source",
+      "weak_suite": "corpus/authentication-spray/weak-suite.yml",
+      "strong_suite": "corpus/authentication-spray/strong-suite.yml"
+    },
+    {
+      "id": "macos-osascript",
+      "domain": "macOS process creation",
+      "purpose": "Inline osascript execution with management-agent filtering",
+      "weak_suite": "corpus/macos-osascript/weak-suite.yml",
+      "strong_suite": "corpus/macos-osascript/strong-suite.yml"
+    },
+    {
+      "id": "container-privileged-exec",
+      "domain": "Container runtime audit",
+      "purpose": "Interactive shell execution in a privileged container",
+      "weak_suite": "corpus/container-privileged-exec/weak-suite.yml",
+      "strong_suite": "corpus/container-privileged-exec/strong-suite.yml"
+    },
+    {
+      "id": "proxy-bulk-upload",
+      "domain": "Network proxy logs",
+      "purpose": "Large scripted uploads with approved-backup filtering",
+      "weak_suite": "corpus/proxy-bulk-upload/weak-suite.yml",
+      "strong_suite": "corpus/proxy-bulk-upload/strong-suite.yml"
+    },
+    {
+      "id": "email-disk-image",
+      "domain": "Email gateway logs",
+      "purpose": "Delivered disk-image attachments from synthetic external domains",
+      "weak_suite": "corpus/email-disk-image/weak-suite.yml",
+      "strong_suite": "corpus/email-disk-image/strong-suite.yml"
+    },
+    {
+      "id": "database-bulk-export",
+      "domain": "Database audit logs",
+      "purpose": "Large scripted export operations with backup-account filtering",
+      "weak_suite": "corpus/database-bulk-export/weak-suite.yml",
+      "strong_suite": "corpus/database-bulk-export/strong-suite.yml"
+    },
+    {
+      "id": "kubernetes-secret-read",
+      "domain": "Kubernetes audit logs",
+      "purpose": "Interactive bulk reads of sensitive resource kinds",
+      "weak_suite": "corpus/kubernetes-secret-read/weak-suite.yml",
+      "strong_suite": "corpus/kubernetes-secret-read/strong-suite.yml"
+    },
+    {
+      "id": "identity-privileged-consent",
+      "domain": "Identity-provider audit logs",
+      "purpose": "Privileged application consent outside an approved automation identity",
+      "weak_suite": "corpus/identity-privileged-consent/weak-suite.yml",
+      "strong_suite": "corpus/identity-privileged-consent/strong-suite.yml"
+    },
+    {
+      "id": "endpoint-sensitive-process-access",
+      "domain": "Endpoint process-access events",
+      "purpose": "Diagnostic tools opening a synthetic sensitive process with broad access",
+      "weak_suite": "corpus/endpoint-sensitive-process-access/weak-suite.yml",
+      "strong_suite": "corpus/endpoint-sensitive-process-access/strong-suite.yml"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+title: Synthetic Delivered Disk Image Attachment
+id: 10000000-0000-4000-8000-000000000011
+status: test
+description: Synthetic email-gateway benchmark rule using reserved domains.
+author: SigmaMutant contributors
+date: 2026-08-24
+logsource:
+  category: email
+detection:
+  selection:
+    attachment_name|endswith:
+      - '.iso'
+      - '.img'
+    sender_domain|endswith:
+      - '.sender.invalid'
+      - '.external.test'
+    delivery_action:
+      - delivered
+      - released
+  filter_recipient:
+    recipient|startswith: 'sandbox-'
+  condition: selection and not filter_recipient
+falsepositives:
+  - Synthetic benchmark only
+level: medium

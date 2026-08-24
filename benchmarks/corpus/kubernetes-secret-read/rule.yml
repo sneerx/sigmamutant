@@ -1,0 +1,26 @@
+title: Synthetic Interactive Sensitive Kubernetes Resource Read
+id: 10000000-0000-4000-8000-000000000013
+status: test
+description: Synthetic normalized Kubernetes-audit benchmark rule.
+author: SigmaMutant contributors
+date: 2026-08-24
+logsource:
+  category: kubernetes
+detection:
+  selection:
+    verb:
+      - get
+      - list
+    resource:
+      - secrets
+      - configmaps
+    user_agent|contains:
+      - 'kubectl/'
+      - 'client-go/'
+    response_code|gte: 200
+  filter_system:
+    actor|startswith: 'system:serviceaccount:kube-system:'
+  condition: selection and not filter_system
+falsepositives:
+  - Synthetic benchmark only
+level: high

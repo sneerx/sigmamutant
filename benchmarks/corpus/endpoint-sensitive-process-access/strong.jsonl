@@ -1,0 +1,7 @@
+{"id":"positive-procdump-auth","expected":true,"event":{"SourceImage":"C:\\Tools\\procdump.exe","TargetImage":"C:\\Windows\\sensitive-auth.exe","GrantedAccess":"0x1010","SourceSigner":"Unsigned"}}
+{"id":"positive-diagnostic-credential","expected":true,"event":{"SourceImage":"C:\\Temp\\diagnostic-tool.exe","TargetImage":"C:\\Windows\\credential-service.exe","GrantedAccess":"0x1fffff","SourceSigner":"Unknown"}}
+{"id":"negative-source","expected":false,"event":{"SourceImage":"C:\\Windows\\notepad.exe","TargetImage":"C:\\Windows\\sensitive-auth.exe","GrantedAccess":"0x1010","SourceSigner":"Unsigned"}}
+{"id":"negative-target","expected":false,"event":{"SourceImage":"C:\\Tools\\procdump.exe","TargetImage":"C:\\Windows\\text-service.exe","GrantedAccess":"0x1010","SourceSigner":"Unsigned"}}
+{"id":"negative-access","expected":false,"event":{"SourceImage":"C:\\Tools\\procdump.exe","TargetImage":"C:\\Windows\\sensitive-auth.exe","GrantedAccess":"0x0010","SourceSigner":"Unsigned"}}
+{"id":"negative-approved-signer","expected":false,"event":{"SourceImage":"C:\\Tools\\procdump.exe","TargetImage":"C:\\Windows\\sensitive-auth.exe","GrantedAccess":"0x1010","SourceSigner":"Example Approved Diagnostics Release"}}
+{"id":"negative-distant","expected":false,"event":{"SourceImage":"notepad.exe","TargetImage":"text-service.exe","GrantedAccess":"0x0010","SourceSigner":"Vendor"}}

@@ -1,0 +1,47 @@
+name: Bug report
+description: Report a reproducible SigmaMutant defect using synthetic inputs.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include credentials, proprietary rules, production logs, or customer data.
+        For a security issue, stop and follow SECURITY.md instead of opening a public issue.
+  - type: input
+    id: version
+    attributes:
+      label: SigmaMutant version
+      placeholder: "1.0.0 or commit SHA"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system and Python version.
+      placeholder: "Ubuntu 24.04, Python 3.12"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal synthetic reproduction
+      description: Include the command and sanitized rule/suite/fixture content.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Observed and expected behavior
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Data safety
+      options:
+        - label: I used synthetic or sanitized inputs and included no secrets.
+          required: true
+        - label: This is not a privately reportable security vulnerability.
+          required: true

@@ -1,0 +1,26 @@
+title: Synthetic Authentication Spray Aggregate
+id: 10000000-0000-4000-8000-000000000007
+status: test
+description: Synthetic pre-aggregated authentication benchmark rule.
+author: SigmaMutant contributors
+date: 2026-08-24
+logsource:
+  category: authentication
+detection:
+  selection_failures:
+    outcome:
+      - failure
+      - denied
+    auth_method:
+      - password
+      - legacy
+    failure_count|gte: 10
+  selection_spread:
+    distinct_users|gte: 5
+    source_type:
+      - external
+      - unknown
+  condition: selection_failures and selection_spread
+falsepositives:
+  - Synthetic benchmark only
+level: medium

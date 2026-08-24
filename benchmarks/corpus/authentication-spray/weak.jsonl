@@ -1,0 +1,2 @@
+{"id":"positive-minimal","expected":true,"event":{"outcome":"failure","auth_method":"password","failure_count":10,"distinct_users":5,"source_type":"external"}}
+{"id":"negative-distant","expected":false,"event":{"outcome":"success","auth_method":"token","failure_count":1,"distinct_users":1,"source_type":"internal"}}

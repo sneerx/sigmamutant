@@ -1,0 +1,24 @@
+title: Synthetic Interactive Shell in Privileged Container
+id: 10000000-0000-4000-8000-000000000009
+status: test
+description: Synthetic normalized container-runtime audit benchmark rule.
+author: SigmaMutant contributors
+date: 2026-08-24
+logsource:
+  category: container
+detection:
+  selection:
+    action:
+      - exec_create
+      - exec_start
+    privileged: true
+    command|contains:
+      - '/bin/sh'
+      - '/bin/bash'
+    interactive: true
+  filter_namespace:
+    namespace|startswith: 'system-'
+  condition: selection and not filter_namespace
+falsepositives:
+  - Synthetic benchmark only
+level: high

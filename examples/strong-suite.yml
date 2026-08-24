@@ -1,0 +1,4 @@
+version: 1
+rule: rules/powershell_encoded.yml
+fixtures: fixtures/strong.jsonl
+fail_under: 0.80

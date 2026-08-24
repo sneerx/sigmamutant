@@ -1,0 +1,199 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hygiene:
+    name: Repository hygiene
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Reject tracked secrets and local environment files
+        shell: bash
+        run: |
+          if git ls-files | grep -E '(^|/)\.env($|\.)|(^|/)\.env_example$|\.(key|pem|p12|pfx)$' \
+            | grep -Fvx '.env.example'; then
+            echo "error: a local environment or private-key file is tracked"
+            exit 1
+          fi
+          if git grep -I -q -E \
+            "sk-(proj|svcacct)-[A-Za-z0-9_-]{20,}|OPENAI_API_KEY=['\"]?sk-[A-Za-z0-9_-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|github_pat_[A-Za-z0-9_]{20,}|gh[pousr]_[A-Za-z0-9]{30,}" \
+            -- .; then
+            echo "error: a high-confidence credential pattern is tracked"
+            exit 1
+          fi
+
+  test:
+    name: Test (${{ matrix.os }}, Python ${{ matrix.python-version }})
+    needs: hygiene
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -c constraints-demo.txt -e ".[ai,dev]"
+      - run: python -m pip check
+      - run: python -m pytest --cov=sigmamutant --cov-report=term-missing
+
+  quality:
+    name: Ruff quality gates
+    needs: hygiene
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -c constraints-demo.txt -e ".[dev]"
+      - run: python -m ruff check .
+      - run: python -m ruff format --check .
+      - run: python -m compileall -q src tests scripts
+      - name: Verify checked-in mutation evaluation evidence
+        run: python scripts/evaluate_corpus.py --verify
+
+  external-evidence:
+    name: Verify pinned SigmaHQ applicability evidence
+    needs: hygiene
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Check out the pinned SigmaHQ corpus
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: SigmaHQ/sigma
+          ref: da9bb07d642a2826e89702445d32c795209ec108
+          path: external/sigmahq
+          fetch-depth: 1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -c constraints-demo.txt .
+      - name: Re-run and compare the external corpus study
+        run: |
+          python scripts/analyze_sigma_corpus.py external/sigmahq \
+            --source-name SigmaHQ/sigma \
+            --source-url https://github.com/SigmaHQ/sigma \
+            --source-revision da9bb07d642a2826e89702445d32c795209ec108 \
+            --out benchmarks/sigmahq-compatibility.json \
+            --verify
+
+  action-smoke:
+    name: Reusable action smoke test
+    needs: hygiene
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Run the local composite action against the passing suite
+        id: mutation-gate
+        uses: ./
+        with:
+          target: examples/strong-suite.yml
+          output: artifacts/action-smoke
+          verbose: "true"
+      - name: Verify aggregate action outputs
+        shell: bash
+        env:
+          SUMMARY_JSON: ${{ steps.mutation-gate.outputs.summary-json }}
+          SUMMARY_HTML: ${{ steps.mutation-gate.outputs.summary-html }}
+          JUNIT_XML: ${{ steps.mutation-gate.outputs.junit-xml }}
+        run: |
+          test -s "${SUMMARY_JSON}"
+          test -s "${SUMMARY_HTML}"
+          test -s "${JUNIT_XML}"
+          python -c 'import json, os; data=json.load(open(os.environ["SUMMARY_JSON"])); assert data["summary"]["passed"] == 1 and data["summary"]["exit_code"] == 0'
+
+  package:
+    name: Build distributions
+    needs: [test, quality, external-evidence, action-smoke]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip build twine
+      - run: python -m build
+      - run: python scripts/verify_release_artifacts.py
+      - run: python -m twine check dist/*
+      - name: Reject private files from distributions
+        shell: bash
+        run: |
+          if tar -tzf dist/sigmamutant-*.tar.gz \
+            | grep -Eq '(^|/)(\.env|\.env_example|artifacts|dist|build|\.venv|__pycache__)(/|$)|\.(key|pem|p12|pfx)$'; then
+            echo "error: source distribution contains a private or generated path"
+            exit 1
+          fi
+          if unzip -Z1 dist/sigmamutant-*.whl \
+            | grep -Eq '(^|/)(\.env|\.env_example|artifacts|dist|build|\.venv|__pycache__)(/|$)|\.(key|pem|p12|pfx)$'; then
+            echo "error: wheel contains a private or generated path"
+            exit 1
+          fi
+      - name: Upload distributions for cross-platform smoke tests
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: sigmamutant-distributions
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  wheel-smoke:
+    name: Wheel smoke (${{ matrix.os }}, Python ${{ matrix.python-version }})
+    needs: package
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: sigmamutant-distributions
+          path: dist
+      - name: Install only the built wheel
+        run: >-
+          python -c "import pathlib, subprocess, sys;
+          wheel=next(pathlib.Path('dist').glob('*.whl'));
+          subprocess.check_call([sys.executable, '-m', 'pip', 'install', str(wheel)])"
+      - run: python -m pip check
+      - run: python -m sigmamutant --version
+      - run: python -m sigmamutant doctor
+      - name: Bootstrap and validate the wheel-contained example
+        run: |
+          python -m sigmamutant init-example wheel-example
+          python -m sigmamutant validate wheel-example/strong-suite.yml

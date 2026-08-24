@@ -1,0 +1,23 @@
+title: Synthetic Web Path Traversal Attempt
+id: 10000000-0000-4000-8000-000000000003
+status: test
+description: Synthetic benchmark rule for normalized web access events.
+author: SigmaMutant contributors
+date: 2026-08-24
+logsource:
+  category: webserver
+detection:
+  selection:
+    http_method:
+      - GET
+      - POST
+    url_path|contains:
+      - '../'
+      - '..%2f'
+    http_status|gte: 400
+  filter_scanner:
+    user_agent|startswith: 'InternalScanner/'
+  condition: selection and not filter_scanner
+falsepositives:
+  - Synthetic benchmark only
+level: medium

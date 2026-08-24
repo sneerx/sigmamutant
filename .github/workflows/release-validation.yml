@@ -1,0 +1,113 @@
+name: Release validation
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-validation-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate-release:
+    name: Validate release artifacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Reject tracked secrets and local environment files
+        shell: bash
+        run: |
+          if git ls-files | grep -E '(^|/)\.env($|\.)|(^|/)\.env_example$|\.(key|pem|p12|pfx)$' \
+            | grep -Fvx '.env.example'; then
+            echo "error: a local environment or private-key file is tracked"
+            exit 1
+          fi
+          if git grep -I -q -E \
+            "sk-(proj|svcacct)-[A-Za-z0-9_-]{20,}|OPENAI_API_KEY=['\"]?sk-[A-Za-z0-9_-]{20,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|github_pat_[A-Za-z0-9_]{20,}|gh[pousr]_[A-Za-z0-9]{30,}" \
+            -- .; then
+            echo "error: a high-confidence credential pattern is tracked"
+            exit 1
+          fi
+
+      - name: Require the tag to match the package version
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          package_version="$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')"
+          if [ "${GITHUB_REF_NAME}" != "v${package_version}" ]; then
+            echo "error: tag ${GITHUB_REF_NAME} does not match package version v${package_version}"
+            exit 1
+          fi
+
+      - name: Install release tooling and project dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build twine
+          python -m pip install -c constraints-demo.txt -e ".[ai,dev]"
+          python -m pip check
+
+      - name: Run release quality gates
+        run: |
+          python -m ruff check .
+          python -m ruff format --check .
+          python -m pytest --cov=sigmamutant --cov-report=term-missing
+          python scripts/evaluate_corpus.py --verify
+
+      - name: Build and validate distributions
+        run: |
+          python -m build
+          python scripts/verify_release_artifacts.py
+          python -m twine check dist/*
+
+      - name: Reject private files from distributions
+        shell: bash
+        run: |
+          if tar -tzf dist/sigmamutant-*.tar.gz \
+            | grep -Eq '(^|/)(\.env|\.env_example|artifacts|dist|build|\.venv|__pycache__)(/|$)|\.(key|pem|p12|pfx)$'; then
+            echo "error: source distribution contains a private or generated path"
+            exit 1
+          fi
+          if unzip -Z1 dist/sigmamutant-*.whl \
+            | grep -Eq '(^|/)(\.env|\.env_example|artifacts|dist|build|\.venv|__pycache__)(/|$)|\.(key|pem|p12|pfx)$'; then
+            echo "error: wheel contains a private or generated path"
+            exit 1
+          fi
+
+      - name: Smoke-test the built wheel in a fresh environment
+        shell: bash
+        run: |
+          python -m venv "${RUNNER_TEMP}/sigmamutant-release-smoke"
+          "${RUNNER_TEMP}/sigmamutant-release-smoke/bin/python" -m pip install dist/sigmamutant-*.whl
+          "${RUNNER_TEMP}/sigmamutant-release-smoke/bin/python" -m pip check
+          "${RUNNER_TEMP}/sigmamutant-release-smoke/bin/sigmamutant" --version
+          "${RUNNER_TEMP}/sigmamutant-release-smoke/bin/sigmamutant" doctor
+          "${RUNNER_TEMP}/sigmamutant-release-smoke/bin/sigmamutant" init-example \
+            "${RUNNER_TEMP}/sigmamutant-example"
+          "${RUNNER_TEMP}/sigmamutant-release-smoke/bin/sigmamutant" validate \
+            "${RUNNER_TEMP}/sigmamutant-example/strong-suite.yml"
+          "${RUNNER_TEMP}/sigmamutant-release-smoke/bin/sigmamutant" run \
+            "${RUNNER_TEMP}/sigmamutant-example/strong-suite.yml" \
+            --out "${RUNNER_TEMP}/sigmamutant-release-report"
+
+      - name: Generate checksums
+        shell: bash
+        run: sha256sum dist/* > dist/SHA256SUMS
+
+      - name: Upload validated release artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: sigmamutant-${{ github.ref_name }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14

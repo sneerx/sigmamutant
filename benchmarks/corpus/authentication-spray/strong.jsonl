@@ -1,0 +1,8 @@
+{"id":"positive-password-external","expected":true,"event":{"outcome":"failure","auth_method":"password","failure_count":12,"distinct_users":7,"source_type":"external"}}
+{"id":"positive-legacy-unknown","expected":true,"event":{"outcome":"denied","auth_method":"legacy","failure_count":20,"distinct_users":9,"source_type":"unknown"}}
+{"id":"negative-outcome","expected":false,"event":{"outcome":"success","auth_method":"password","failure_count":12,"distinct_users":7,"source_type":"external"}}
+{"id":"negative-method","expected":false,"event":{"outcome":"failure","auth_method":"token","failure_count":12,"distinct_users":7,"source_type":"external"}}
+{"id":"negative-low-count","expected":false,"event":{"outcome":"failure","auth_method":"password","failure_count":4,"distinct_users":7,"source_type":"external"}}
+{"id":"negative-low-spread","expected":false,"event":{"outcome":"failure","auth_method":"password","failure_count":12,"distinct_users":2,"source_type":"external"}}
+{"id":"negative-source-type","expected":false,"event":{"outcome":"failure","auth_method":"password","failure_count":12,"distinct_users":7,"source_type":"internal"}}
+{"id":"negative-distant","expected":false,"event":{"outcome":"success","auth_method":"token","failure_count":1,"distinct_users":1,"source_type":"internal"}}

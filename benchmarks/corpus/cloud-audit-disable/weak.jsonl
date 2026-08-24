@@ -1,0 +1,2 @@
+{"id":"positive-minimal","expected":true,"event":{"event_name":"StopLogging","event_source":".cloudtrail.amazonaws.com","outcome":"success","actor":"admin"}}
+{"id":"negative-distant","expected":false,"event":{"event_name":"DescribeTrails","event_source":"monitoring.example","outcome":"success","actor":"admin"}}

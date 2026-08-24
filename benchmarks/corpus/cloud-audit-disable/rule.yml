@@ -1,0 +1,25 @@
+title: Synthetic Cloud Audit Logging Disable Operation
+id: 10000000-0000-4000-8000-000000000006
+status: test
+description: Synthetic normalized cloud-audit benchmark rule.
+author: SigmaMutant contributors
+date: 2026-08-24
+logsource:
+  category: cloud
+detection:
+  selection:
+    event_name:
+      - StopLogging
+      - DeleteTrail
+    event_source|endswith:
+      - '.cloudtrail.amazonaws.com'
+      - '.audit.invalid'
+    outcome:
+      - success
+      - succeeded
+  filter_role:
+    actor|startswith: 'approved-deployment-'
+  condition: selection and not filter_role
+falsepositives:
+  - Synthetic benchmark only
+level: high

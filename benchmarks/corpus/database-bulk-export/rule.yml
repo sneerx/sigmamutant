@@ -1,0 +1,26 @@
+title: Synthetic Large Scripted Database Export
+id: 10000000-0000-4000-8000-000000000012
+status: test
+description: Synthetic normalized database-audit benchmark rule.
+author: SigmaMutant contributors
+date: 2026-08-24
+logsource:
+  category: database
+detection:
+  selection:
+    operation:
+      - COPY_TO
+      - SELECT_INTO_OUTFILE
+    object_type:
+      - table
+      - schema
+    rows_returned|gte: 100000
+    client_app|contains:
+      - 'psql'
+      - 'mysql'
+  filter_account:
+    database_user|startswith: 'approved_backup_'
+  condition: selection and not filter_account
+falsepositives:
+  - Synthetic benchmark only
+level: high

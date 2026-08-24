@@ -1,0 +1,1750 @@
+{
+  "cases": [
+    {
+      "domain": "Windows process creation",
+      "id": "windows-powershell",
+      "purpose": "Encoded PowerShell with an approved-parent exclusion",
+      "rule_title": "Synthetic Encoded PowerShell from an Untrusted Parent",
+      "score_delta": 0.5384615384615384,
+      "strong": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 6,
+        "input_hashes": {
+          "fixtures_sha256": "c2f610d8e5c8381bea6cb18d3df53814e3f5d8d6453e4f98f007a99d2deed3a7",
+          "rule_sha256": "d076212b2d4f19600c50ece29320b3db8b44970251fa8f9f46b828358c40f20f",
+          "suite_sha256": "3d674d3b8ff4feee4a498314397d1776ad3c430a8477a2502d3c0b418153d886"
+        },
+        "killed": 13,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 4,
+            "survived": 0
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          }
+        },
+        "score": 1.0,
+        "scoreable": 13,
+        "survived": 0
+      },
+      "weak": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 2,
+        "input_hashes": {
+          "fixtures_sha256": "802c3509a28d72df12591adb3a4eb0d1a65d20f47bd8fa39384c2d766d53a7c2",
+          "rule_sha256": "d076212b2d4f19600c50ece29320b3db8b44970251fa8f9f46b828358c40f20f",
+          "suite_sha256": "7fa844b0315b6634ccc6bc956b3c9e6df12b3761228f891a16b54772f69b2b60"
+        },
+        "killed": 6,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 2,
+            "survived": 2
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 0,
+            "survived": 2
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 0,
+            "survived": 3
+          }
+        },
+        "score": 0.46153846153846156,
+        "scoreable": 13,
+        "survived": 7
+      }
+    },
+    {
+      "domain": "Linux process creation",
+      "id": "linux-download-pipe",
+      "purpose": "Downloaded content piped to a shell with service-account filtering",
+      "rule_title": "Synthetic Download Piped to Linux Shell",
+      "score_delta": 0.5555555555555556,
+      "strong": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 7,
+        "input_hashes": {
+          "fixtures_sha256": "bad32d5c5682b716bb3aa0ab800436a93f6e18e606acef616e7d08367e49973d",
+          "rule_sha256": "417a768f07e6627b770b0f330c453e021f9b6fed793563db6457c05649c90f70",
+          "suite_sha256": "3d674d3b8ff4feee4a498314397d1776ad3c430a8477a2502d3c0b418153d886"
+        },
+        "killed": 18,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 6,
+            "survived": 0
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 4,
+            "survived": 0
+          }
+        },
+        "score": 1.0,
+        "scoreable": 18,
+        "survived": 0
+      },
+      "weak": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 2,
+        "input_hashes": {
+          "fixtures_sha256": "89a0571456f5d2f7da7e9643c3fe15e9a0219d92bd7c2b3bd272e42a5a2b7edd",
+          "rule_sha256": "417a768f07e6627b770b0f330c453e021f9b6fed793563db6457c05649c90f70",
+          "suite_sha256": "7fa844b0315b6634ccc6bc956b3c9e6df12b3761228f891a16b54772f69b2b60"
+        },
+        "killed": 8,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 3,
+            "survived": 3
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 0,
+            "survived": 3
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 0,
+            "survived": 4
+          }
+        },
+        "score": 0.4444444444444444,
+        "scoreable": 18,
+        "survived": 10
+      }
+    },
+    {
+      "domain": "Web access logs",
+      "id": "web-path-traversal",
+      "purpose": "Traversal tokens in failed requests with scanner filtering",
+      "rule_title": "Synthetic Web Path Traversal Attempt",
+      "score_delta": 0.5384615384615384,
+      "strong": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 7,
+        "input_hashes": {
+          "fixtures_sha256": "4432ef924e2a79c419eca80a96b99c68204e32e61ba95289b78decc34115f296",
+          "rule_sha256": "75c701aa023ba880e377f76c4dfce09608eeab38dbc8db95acdf1f3bf18b8a35",
+          "suite_sha256": "3d674d3b8ff4feee4a498314397d1776ad3c430a8477a2502d3c0b418153d886"
+        },
+        "killed": 13,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 4,
+            "survived": 0
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          }
+        },
+        "score": 1.0,
+        "scoreable": 13,
+        "survived": 0
+      },
+      "weak": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 2,
+        "input_hashes": {
+          "fixtures_sha256": "8270fc46b23e3fbe954a78d964e0b53e74e15628dfa8bc8dbe3596137ed4102e",
+          "rule_sha256": "75c701aa023ba880e377f76c4dfce09608eeab38dbc8db95acdf1f3bf18b8a35",
+          "suite_sha256": "7fa844b0315b6634ccc6bc956b3c9e6df12b3761228f891a16b54772f69b2b60"
+        },
+        "killed": 6,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 2,
+            "survived": 2
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 0,
+            "survived": 3
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 0,
+            "survived": 2
+          }
+        },
+        "score": 0.46153846153846156,
+        "scoreable": 13,
+        "survived": 7
+      }
+    },
+    {
+      "domain": "DNS query logs",
+      "id": "dns-tunnel",
+      "purpose": "Long TXT or NULL queries to synthetic tunnelling suffixes",
+      "rule_title": "Synthetic Long DNS Query to Tunnelling Suffix",
+      "score_delta": 0.5,
+      "strong": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 6,
+        "input_hashes": {
+          "fixtures_sha256": "b5518847f8bb164c30c85da24cfe0f529dce9abe6c24de1513f3ebeb9a6b3f2a",
+          "rule_sha256": "2e7c381db11393af63ba703ea6a4225db52069eb3f57bd71cf70dde7152d91a1",
+          "suite_sha256": "3d674d3b8ff4feee4a498314397d1776ad3c430a8477a2502d3c0b418153d886"
+        },
+        "killed": 10,
+        "operators": {
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 4,
+            "survived": 0
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          }
+        },
+        "score": 1.0,
+        "scoreable": 10,
+        "survived": 0
+      },
+      "weak": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 2,
+        "input_hashes": {
+          "fixtures_sha256": "73da1fe0ead15a895f6d3383357957c812586a31f0fc418ff9129964910b8c44",
+          "rule_sha256": "2e7c381db11393af63ba703ea6a4225db52069eb3f57bd71cf70dde7152d91a1",
+          "suite_sha256": "7fa844b0315b6634ccc6bc956b3c9e6df12b3761228f891a16b54772f69b2b60"
+        },
+        "killed": 5,
+        "operators": {
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 2,
+            "survived": 2
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 0,
+            "survived": 3
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          }
+        },
+        "score": 0.5,
+        "scoreable": 10,
+        "survived": 5
+      }
+    },
+    {
+      "domain": "Windows registry events",
+      "id": "windows-run-key",
+      "purpose": "Script interpreters written to Run or RunOnce persistence keys",
+      "rule_title": "Synthetic Script Interpreter in Run Key",
+      "score_delta": 0.5294117647058824,
+      "strong": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 7,
+        "input_hashes": {
+          "fixtures_sha256": "801d905313f1f7ce8f6927535bfa75b782ccf92a9aa6e68ddff745df28b99900",
+          "rule_sha256": "d3b86bbcc0ab81f9ae37fc77238cd617d090d61162d5c0adeaf3ef53c344429a",
+          "suite_sha256": "3d674d3b8ff4feee4a498314397d1776ad3c430a8477a2502d3c0b418153d886"
+        },
+        "killed": 17,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 6,
+            "survived": 0
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          }
+        },
+        "score": 1.0,
+        "scoreable": 17,
+        "survived": 0
+      },
+      "weak": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 2,
+        "input_hashes": {
+          "fixtures_sha256": "8cfc7e42b7382623de9906dd74485dc30714d452000180d8e5f60e89040a271f",
+          "rule_sha256": "d3b86bbcc0ab81f9ae37fc77238cd617d090d61162d5c0adeaf3ef53c344429a",
+          "suite_sha256": "7fa844b0315b6634ccc6bc956b3c9e6df12b3761228f891a16b54772f69b2b60"
+        },
+        "killed": 8,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 3,
+            "survived": 3
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 0,
+            "survived": 3
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 0,
+            "survived": 3
+          }
+        },
+        "score": 0.47058823529411764,
+        "scoreable": 17,
+        "survived": 9
+      }
+    },
+    {
+      "domain": "Cloud audit logs",
+      "id": "cloud-audit-disable",
+      "purpose": "Audit logging disable operations with deployment-role filtering",
+      "rule_title": "Synthetic Cloud Audit Logging Disable Operation",
+      "score_delta": 0.5,
+      "strong": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 7,
+        "input_hashes": {
+          "fixtures_sha256": "0f42e00d43de87f26bd16982970c429911db8c96aa8aeddea93b2620e720fd42",
+          "rule_sha256": "d870af897f24fbf5f77bf6aedd9c71cc1e94e7486789d839d304d91e9e345e2d",
+          "suite_sha256": "3d674d3b8ff4feee4a498314397d1776ad3c430a8477a2502d3c0b418153d886"
+        },
+        "killed": 16,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 6,
+            "survived": 0
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          }
+        },
+        "score": 1.0,
+        "scoreable": 16,
+        "survived": 0
+      },
+      "weak": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 2,
+        "input_hashes": {
+          "fixtures_sha256": "29b5e810e4adf27eb38ea26840a2774713a84e0089aa0ca4317d2b05fc177692",
+          "rule_sha256": "d870af897f24fbf5f77bf6aedd9c71cc1e94e7486789d839d304d91e9e345e2d",
+          "suite_sha256": "7fa844b0315b6634ccc6bc956b3c9e6df12b3761228f891a16b54772f69b2b60"
+        },
+        "killed": 8,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 3,
+            "survived": 3
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 0,
+            "survived": 3
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 0,
+            "survived": 2
+          }
+        },
+        "score": 0.5,
+        "scoreable": 16,
+        "survived": 8
+      }
+    },
+    {
+      "domain": "Authentication logs",
+      "id": "authentication-spray",
+      "purpose": "Burst failed authentication activity from a single source",
+      "rule_title": "Synthetic Authentication Spray Aggregate",
+      "score_delta": 0.6,
+      "strong": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 8,
+        "input_hashes": {
+          "fixtures_sha256": "4d49d9c0e1313f3404ee20640dee5ac0bd2542a3dea75656863aedc3dbaa1aef",
+          "rule_sha256": "2b60f8f44a0c1f334c596af9a534c5929d24e297fcd8b6bb39fe725929eb9d80",
+          "suite_sha256": "3d674d3b8ff4feee4a498314397d1776ad3c430a8477a2502d3c0b418153d886"
+        },
+        "killed": 15,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 6,
+            "survived": 0
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 5,
+            "killed": 5,
+            "survived": 0
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          }
+        },
+        "score": 1.0,
+        "scoreable": 15,
+        "survived": 0
+      },
+      "weak": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 2,
+        "input_hashes": {
+          "fixtures_sha256": "07e976117b56ae4919e982d15199f0074fdd85034c8542eaf94ff7e6ba8d8146",
+          "rule_sha256": "2b60f8f44a0c1f334c596af9a534c5929d24e297fcd8b6bb39fe725929eb9d80",
+          "suite_sha256": "7fa844b0315b6634ccc6bc956b3c9e6df12b3761228f891a16b54772f69b2b60"
+        },
+        "killed": 6,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 0,
+            "survived": 1
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 3,
+            "survived": 3
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 5,
+            "killed": 0,
+            "survived": 5
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          }
+        },
+        "score": 0.4,
+        "scoreable": 15,
+        "survived": 9
+      }
+    },
+    {
+      "domain": "macOS process creation",
+      "id": "macos-osascript",
+      "purpose": "Inline osascript execution with management-agent filtering",
+      "rule_title": "Synthetic Inline osascript from an Interactive Parent",
+      "score_delta": 0.5555555555555556,
+      "strong": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 7,
+        "input_hashes": {
+          "fixtures_sha256": "73d8de938413729af5ac40684050cc85193f7e01340f41f5adbaf6e9062bdc9e",
+          "rule_sha256": "070e5389ff149aff06d9a914c368c68d4c390b696bd2602ae082a34ae289659d",
+          "suite_sha256": "3d674d3b8ff4feee4a498314397d1776ad3c430a8477a2502d3c0b418153d886"
+        },
+        "killed": 18,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 6,
+            "survived": 0
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 4,
+            "survived": 0
+          }
+        },
+        "score": 1.0,
+        "scoreable": 18,
+        "survived": 0
+      },
+      "weak": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 2,
+        "input_hashes": {
+          "fixtures_sha256": "26d04de515fea7a1d5076877b6c2d7d7b876a4f187d046f7be4ebea88df2fcd0",
+          "rule_sha256": "070e5389ff149aff06d9a914c368c68d4c390b696bd2602ae082a34ae289659d",
+          "suite_sha256": "7fa844b0315b6634ccc6bc956b3c9e6df12b3761228f891a16b54772f69b2b60"
+        },
+        "killed": 8,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 3,
+            "survived": 3
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 0,
+            "survived": 3
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 0,
+            "survived": 4
+          }
+        },
+        "score": 0.4444444444444444,
+        "scoreable": 18,
+        "survived": 10
+      }
+    },
+    {
+      "domain": "Container runtime audit",
+      "id": "container-privileged-exec",
+      "purpose": "Interactive shell execution in a privileged container",
+      "rule_title": "Synthetic Interactive Shell in Privileged Container",
+      "score_delta": 0.5714285714285714,
+      "strong": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 8,
+        "input_hashes": {
+          "fixtures_sha256": "3ca05b9c3235d33e3e9c33e60ae3d2444cb333061b5664ffd0eb43f1d91854c4",
+          "rule_sha256": "e81d5eb7d3e99d72af19a38605076d7353aeabcac91bc25338769a724818550c",
+          "suite_sha256": "3d674d3b8ff4feee4a498314397d1776ad3c430a8477a2502d3c0b418153d886"
+        },
+        "killed": 14,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 4,
+            "survived": 0
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 4,
+            "survived": 0
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          }
+        },
+        "score": 1.0,
+        "scoreable": 14,
+        "survived": 0
+      },
+      "weak": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 2,
+        "input_hashes": {
+          "fixtures_sha256": "19725c73d989931c551ed99b9bc519463e7f0f8844ff4e07d07a78d9f9ea1665",
+          "rule_sha256": "e81d5eb7d3e99d72af19a38605076d7353aeabcac91bc25338769a724818550c",
+          "suite_sha256": "7fa844b0315b6634ccc6bc956b3c9e6df12b3761228f891a16b54772f69b2b60"
+        },
+        "killed": 6,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 2,
+            "survived": 2
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 0,
+            "survived": 4
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 0,
+            "survived": 2
+          }
+        },
+        "score": 0.42857142857142855,
+        "scoreable": 14,
+        "survived": 8
+      }
+    },
+    {
+      "domain": "Network proxy logs",
+      "id": "proxy-bulk-upload",
+      "purpose": "Large scripted uploads with approved-backup filtering",
+      "rule_title": "Synthetic Large Scripted Proxy Upload",
+      "score_delta": 0.5384615384615384,
+      "strong": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 7,
+        "input_hashes": {
+          "fixtures_sha256": "dc504bc5bac5f05582afa3ce99a8d7c3056501678e0cc2a62bd3f87b2e2d380f",
+          "rule_sha256": "6009e7d6834c4964ffdc5d9cd8229d538a7992910072037b17395795b508edb5",
+          "suite_sha256": "3d674d3b8ff4feee4a498314397d1776ad3c430a8477a2502d3c0b418153d886"
+        },
+        "killed": 13,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 4,
+            "survived": 0
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          }
+        },
+        "score": 1.0,
+        "scoreable": 13,
+        "survived": 0
+      },
+      "weak": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 2,
+        "input_hashes": {
+          "fixtures_sha256": "798445141540443591417eb85a67467a44354c02dd0abcf726f09e810a14479a",
+          "rule_sha256": "6009e7d6834c4964ffdc5d9cd8229d538a7992910072037b17395795b508edb5",
+          "suite_sha256": "7fa844b0315b6634ccc6bc956b3c9e6df12b3761228f891a16b54772f69b2b60"
+        },
+        "killed": 6,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 2,
+            "survived": 2
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 0,
+            "survived": 3
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 0,
+            "survived": 2
+          }
+        },
+        "score": 0.46153846153846156,
+        "scoreable": 13,
+        "survived": 7
+      }
+    },
+    {
+      "domain": "Email gateway logs",
+      "id": "email-disk-image",
+      "purpose": "Delivered disk-image attachments from synthetic external domains",
+      "rule_title": "Synthetic Delivered Disk Image Attachment",
+      "score_delta": 0.5294117647058824,
+      "strong": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 7,
+        "input_hashes": {
+          "fixtures_sha256": "ca7eafab3c56770aeed406d162a88f8d2d86341996f899b2d7c1806a12c98240",
+          "rule_sha256": "8f947169943497bdb54b046dfb6171c6744454962fc253cdb532735693dccd0b",
+          "suite_sha256": "3d674d3b8ff4feee4a498314397d1776ad3c430a8477a2502d3c0b418153d886"
+        },
+        "killed": 17,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 6,
+            "survived": 0
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          }
+        },
+        "score": 1.0,
+        "scoreable": 17,
+        "survived": 0
+      },
+      "weak": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 2,
+        "input_hashes": {
+          "fixtures_sha256": "ad099acf4c2ac696202203c109631b60baf87660aee90af2d63515e59e663658",
+          "rule_sha256": "8f947169943497bdb54b046dfb6171c6744454962fc253cdb532735693dccd0b",
+          "suite_sha256": "7fa844b0315b6634ccc6bc956b3c9e6df12b3761228f891a16b54772f69b2b60"
+        },
+        "killed": 8,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 3,
+            "survived": 3
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 0,
+            "survived": 3
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 0,
+            "survived": 3
+          }
+        },
+        "score": 0.47058823529411764,
+        "scoreable": 17,
+        "survived": 9
+      }
+    },
+    {
+      "domain": "Database audit logs",
+      "id": "database-bulk-export",
+      "purpose": "Large scripted export operations with backup-account filtering",
+      "rule_title": "Synthetic Large Scripted Database Export",
+      "score_delta": 0.5294117647058824,
+      "strong": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 8,
+        "input_hashes": {
+          "fixtures_sha256": "3580afb2c9cf9d9d8932c2eb43bd203c24ee559ca8fa574266aaccacc03e0442",
+          "rule_sha256": "ef9513ef2ffe567bd9cd09fea4420c91e1fe3ff9790effa5e59870c85f6ad6df",
+          "suite_sha256": "3d674d3b8ff4feee4a498314397d1776ad3c430a8477a2502d3c0b418153d886"
+        },
+        "killed": 17,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 6,
+            "survived": 0
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 4,
+            "survived": 0
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          }
+        },
+        "score": 1.0,
+        "scoreable": 17,
+        "survived": 0
+      },
+      "weak": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 2,
+        "input_hashes": {
+          "fixtures_sha256": "c83faa7214afd8c968ab5bcc3e075cc4a5902318ad3c5b6b27c181ab62e52a17",
+          "rule_sha256": "ef9513ef2ffe567bd9cd09fea4420c91e1fe3ff9790effa5e59870c85f6ad6df",
+          "suite_sha256": "7fa844b0315b6634ccc6bc956b3c9e6df12b3761228f891a16b54772f69b2b60"
+        },
+        "killed": 8,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 3,
+            "survived": 3
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 0,
+            "survived": 4
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 0,
+            "survived": 2
+          }
+        },
+        "score": 0.47058823529411764,
+        "scoreable": 17,
+        "survived": 9
+      }
+    },
+    {
+      "domain": "Kubernetes audit logs",
+      "id": "kubernetes-secret-read",
+      "purpose": "Interactive bulk reads of sensitive resource kinds",
+      "rule_title": "Synthetic Interactive Sensitive Kubernetes Resource Read",
+      "score_delta": 0.5294117647058824,
+      "strong": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 8,
+        "input_hashes": {
+          "fixtures_sha256": "b770dd8c7d8ac81c8e430c69953456777b41c7edd75f5e937f50cddf1187fcb0",
+          "rule_sha256": "b51c09b498212cb8f90b28b8f05e4037cad8119015a9df7282bad74f8c9bd183",
+          "suite_sha256": "3d674d3b8ff4feee4a498314397d1776ad3c430a8477a2502d3c0b418153d886"
+        },
+        "killed": 17,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 6,
+            "survived": 0
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 4,
+            "survived": 0
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          }
+        },
+        "score": 1.0,
+        "scoreable": 17,
+        "survived": 0
+      },
+      "weak": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 2,
+        "input_hashes": {
+          "fixtures_sha256": "081041fecc4e9b90d2bd50b25550fb02ebf545bba8a50b8611d421387a9b3b29",
+          "rule_sha256": "b51c09b498212cb8f90b28b8f05e4037cad8119015a9df7282bad74f8c9bd183",
+          "suite_sha256": "7fa844b0315b6634ccc6bc956b3c9e6df12b3761228f891a16b54772f69b2b60"
+        },
+        "killed": 8,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 3,
+            "survived": 3
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 4,
+            "killed": 0,
+            "survived": 4
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 0,
+            "survived": 2
+          }
+        },
+        "score": 0.47058823529411764,
+        "scoreable": 17,
+        "survived": 9
+      }
+    },
+    {
+      "domain": "Identity-provider audit logs",
+      "id": "identity-privileged-consent",
+      "purpose": "Privileged application consent outside an approved automation identity",
+      "rule_title": "Synthetic Privileged Application Consent",
+      "score_delta": 0.5,
+      "strong": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 7,
+        "input_hashes": {
+          "fixtures_sha256": "7dd81925f808721ba9eab6551110345f0f0efd650e5cc2b9020afb041a3b23ea",
+          "rule_sha256": "a744dd5f20eb445147108c30049af5b2d8fb3b1a844d894bde542816e67899a2",
+          "suite_sha256": "3d674d3b8ff4feee4a498314397d1776ad3c430a8477a2502d3c0b418153d886"
+        },
+        "killed": 16,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 6,
+            "survived": 0
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 2,
+            "survived": 0
+          }
+        },
+        "score": 1.0,
+        "scoreable": 16,
+        "survived": 0
+      },
+      "weak": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 2,
+        "input_hashes": {
+          "fixtures_sha256": "3cb8be834634ff0e412f146f7dce50c717659bc1768bff8411ff05472f7e1cd3",
+          "rule_sha256": "a744dd5f20eb445147108c30049af5b2d8fb3b1a844d894bde542816e67899a2",
+          "suite_sha256": "7fa844b0315b6634ccc6bc956b3c9e6df12b3761228f891a16b54772f69b2b60"
+        },
+        "killed": 8,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 3,
+            "survived": 3
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 0,
+            "survived": 3
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 2,
+            "killed": 0,
+            "survived": 2
+          }
+        },
+        "score": 0.5,
+        "scoreable": 16,
+        "survived": 8
+      }
+    },
+    {
+      "domain": "Endpoint process-access events",
+      "id": "endpoint-sensitive-process-access",
+      "purpose": "Diagnostic tools opening a synthetic sensitive process with broad access",
+      "rule_title": "Synthetic Broad Access to Sensitive Process",
+      "score_delta": 0.5294117647058824,
+      "strong": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 7,
+        "input_hashes": {
+          "fixtures_sha256": "d5f8051af69d5f573ebebacd0e0c316f79a64003fde8d76d9f801c38af63061e",
+          "rule_sha256": "62de6d79bfd96c77b794caa6d6ced34d63ee2f4d71afdd40f308a59aad2ed4a9",
+          "suite_sha256": "3d674d3b8ff4feee4a498314397d1776ad3c430a8477a2502d3c0b418153d886"
+        },
+        "killed": 17,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 6,
+            "survived": 0
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          }
+        },
+        "score": 1.0,
+        "scoreable": 17,
+        "survived": 0
+      },
+      "weak": {
+        "baseline_passed": true,
+        "excluded": 0,
+        "fixtures": 2,
+        "input_hashes": {
+          "fixtures_sha256": "dda70f44dce1598218e97bf5cc3ce81f45016b6103efcc2c8dd5cd2002a2c11a",
+          "rule_sha256": "62de6d79bfd96c77b794caa6d6ced34d63ee2f4d71afdd40f308a59aad2ed4a9",
+          "suite_sha256": "7fa844b0315b6634ccc6bc956b3c9e6df12b3761228f891a16b54772f69b2b60"
+        },
+        "killed": 8,
+        "operators": {
+          "condition_and_to_or": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "condition_remove_not": {
+            "excluded": 0,
+            "generated": 1,
+            "killed": 1,
+            "survived": 0
+          },
+          "delete_list_item": {
+            "excluded": 0,
+            "generated": 6,
+            "killed": 3,
+            "survived": 3
+          },
+          "delete_predicate": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 0,
+            "survived": 3
+          },
+          "list_any_to_all": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 3,
+            "survived": 0
+          },
+          "modifier_to_exact": {
+            "excluded": 0,
+            "generated": 3,
+            "killed": 0,
+            "survived": 3
+          }
+        },
+        "score": 0.47058823529411764,
+        "scoreable": 17,
+        "survived": 9
+      }
+    }
+  ],
+  "corpus": {
+    "cases": 15,
+    "data_classification": "synthetic-inert-no-production-telemetry",
+    "domains": [
+      "Authentication logs",
+      "Cloud audit logs",
+      "Container runtime audit",
+      "DNS query logs",
+      "Database audit logs",
+      "Email gateway logs",
+      "Endpoint process-access events",
+      "Identity-provider audit logs",
+      "Kubernetes audit logs",
+      "Linux process creation",
+      "Network proxy logs",
+      "Web access logs",
+      "Windows process creation",
+      "Windows registry events",
+      "macOS process creation"
+    ],
+    "manifest_sha256": "69cc6d7aca13c41438ce25583fb933f951d63cc2182ba767e3bff824a7276923",
+    "name": "SigmaMutant synthetic multi-domain fixture-quality corpus v1"
+  },
+  "dependencies": {
+    "azuma": "0.7.3",
+    "pysigma": "1.5.0",
+    "sigmamutant": "1.0.0"
+  },
+  "schema_version": 1,
+  "summary": {
+    "baselines_passed": 30,
+    "paired_rules_unchanged": 15,
+    "pairs_improved": 15,
+    "strong": {
+      "excluded": 0,
+      "fixtures": 107,
+      "killed": 231,
+      "operators": {
+        "condition_and_to_or": {
+          "excluded": 0,
+          "generated": 14,
+          "killed": 14,
+          "survived": 0
+        },
+        "condition_remove_not": {
+          "excluded": 0,
+          "generated": 13,
+          "killed": 13,
+          "survived": 0
+        },
+        "delete_list_item": {
+          "excluded": 0,
+          "generated": 80,
+          "killed": 80,
+          "survived": 0
+        },
+        "delete_predicate": {
+          "excluded": 0,
+          "generated": 49,
+          "killed": 49,
+          "survived": 0
+        },
+        "list_any_to_all": {
+          "excluded": 0,
+          "generated": 40,
+          "killed": 40,
+          "survived": 0
+        },
+        "modifier_to_exact": {
+          "excluded": 0,
+          "generated": 35,
+          "killed": 35,
+          "survived": 0
+        }
+      },
+      "scoreable": 231,
+      "suites": 15,
+      "survived": 0,
+      "weighted_score": 1.0
+    },
+    "strong_suites_at_100_percent": 15,
+    "weak": {
+      "excluded": 0,
+      "fixtures": 30,
+      "killed": 107,
+      "operators": {
+        "condition_and_to_or": {
+          "excluded": 0,
+          "generated": 14,
+          "killed": 13,
+          "survived": 1
+        },
+        "condition_remove_not": {
+          "excluded": 0,
+          "generated": 13,
+          "killed": 13,
+          "survived": 0
+        },
+        "delete_list_item": {
+          "excluded": 0,
+          "generated": 80,
+          "killed": 40,
+          "survived": 40
+        },
+        "delete_predicate": {
+          "excluded": 0,
+          "generated": 49,
+          "killed": 0,
+          "survived": 49
+        },
+        "list_any_to_all": {
+          "excluded": 0,
+          "generated": 40,
+          "killed": 40,
+          "survived": 0
+        },
+        "modifier_to_exact": {
+          "excluded": 0,
+          "generated": 35,
+          "killed": 1,
+          "survived": 34
+        }
+      },
+      "scoreable": 231,
+      "suites": 15,
+      "survived": 124,
+      "weighted_score": 0.46320346320346323
+    }
+  }
+}

@@ -1,0 +1,2 @@
+{"id":"positive-minimal","expected":true,"event":{"operation":"AddAppRoleAssignment","permission":"Directory.ReadWrite.All","actor_type":"user","actor":"admin"}}
+{"id":"negative-distant","expected":false,"event":{"operation":"ReadApplication","permission":"User.Read","actor_type":"application","actor":"reader"}}

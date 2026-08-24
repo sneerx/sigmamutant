@@ -1,0 +1,2 @@
+{"id":"positive-minimal","expected":true,"event":{"http_method":"POST","bytes_out":1000000,"user_agent":"curl/","destination_domain":"upload.invalid"}}
+{"id":"negative-distant","expected":false,"event":{"http_method":"GET","bytes_out":1000,"user_agent":"browser","destination_domain":"www.example.com"}}

@@ -1,0 +1,8 @@
+{"id":"positive-create-sh","expected":true,"event":{"action":"exec_create","privileged":true,"command":"runtime exec -it demo /bin/sh","interactive":true,"namespace":"user-app"}}
+{"id":"positive-start-bash","expected":true,"event":{"action":"exec_start","privileged":true,"command":"runtime exec -it demo /bin/bash","interactive":true,"namespace":"test-app"}}
+{"id":"negative-action","expected":false,"event":{"action":"image_pull","privileged":true,"command":"runtime exec -it demo /bin/sh","interactive":true,"namespace":"user-app"}}
+{"id":"negative-not-privileged","expected":false,"event":{"action":"exec_create","privileged":false,"command":"runtime exec -it demo /bin/sh","interactive":true,"namespace":"user-app"}}
+{"id":"negative-command","expected":false,"event":{"action":"exec_create","privileged":true,"command":"runtime exec demo /app/healthcheck","interactive":true,"namespace":"user-app"}}
+{"id":"negative-not-interactive","expected":false,"event":{"action":"exec_create","privileged":true,"command":"runtime exec demo /bin/sh","interactive":false,"namespace":"user-app"}}
+{"id":"negative-system-namespace","expected":false,"event":{"action":"exec_create","privileged":true,"command":"runtime exec -it demo /bin/sh","interactive":true,"namespace":"system-maintenance"}}
+{"id":"negative-distant","expected":false,"event":{"action":"image_pull","privileged":false,"command":"app","interactive":false,"namespace":"user-app"}}

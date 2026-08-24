@@ -1,0 +1,29 @@
+title: Encoded PowerShell Process from an Untrusted Parent
+id: 58d2c8af-4f08-4e53-9cab-b1e79a3f22b3
+status: experimental
+description: >-
+  Detects synthetic process-creation events where Windows PowerShell or
+  PowerShell 7 uses an encoded-command switch, excluding a trusted deployment
+  parent. This rule exists for the SigmaMutant example suite.
+author: SigmaMutant contributors
+date: 2026-07-23
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_cli:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+    CommandLine|contains:
+      - ' -EncodedCommand '
+      - ' -enc '
+  filter_trusted_parent:
+    ParentImage|endswith: '\trusted-deployer.exe'
+  condition: selection_cli and not filter_trusted_parent
+falsepositives:
+  - Approved administrative automation not using the trusted parent
+level: high
+tags:
+  - attack.execution
+  - attack.t1059.001

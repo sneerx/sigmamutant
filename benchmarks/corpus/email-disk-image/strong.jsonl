@@ -1,0 +1,7 @@
+{"id":"positive-iso-delivered","expected":true,"event":{"attachment_name":"invoice.iso","sender_domain":"mail.sender.invalid","delivery_action":"delivered","recipient":"alice"}}
+{"id":"positive-img-released","expected":true,"event":{"attachment_name":"archive.img","sender_domain":"relay.external.test","delivery_action":"released","recipient":"bob"}}
+{"id":"negative-extension","expected":false,"event":{"attachment_name":"invoice.pdf","sender_domain":"mail.sender.invalid","delivery_action":"delivered","recipient":"alice"}}
+{"id":"negative-domain","expected":false,"event":{"attachment_name":"invoice.iso","sender_domain":"partner.example","delivery_action":"delivered","recipient":"alice"}}
+{"id":"negative-action","expected":false,"event":{"attachment_name":"invoice.iso","sender_domain":"mail.sender.invalid","delivery_action":"blocked","recipient":"alice"}}
+{"id":"negative-sandbox-recipient","expected":false,"event":{"attachment_name":"invoice.iso","sender_domain":"mail.sender.invalid","delivery_action":"delivered","recipient":"sandbox-analysis"}}
+{"id":"negative-distant","expected":false,"event":{"attachment_name":"report.pdf","sender_domain":"partner.example","delivery_action":"delivered","recipient":"alice"}}

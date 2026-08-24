@@ -1,0 +1,32 @@
+name: Feature request
+description: Propose a bounded improvement to SigmaMutant.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Detection-engineering problem
+      description: Explain the test-quality gap this would address.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include CLI, schema, determinism, and safety implications.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Project boundaries
+      options:
+        - label: This request does not depend on executing fixture content.
+          required: true
+        - label: I have not included proprietary rules, production logs, or secrets.
+          required: true

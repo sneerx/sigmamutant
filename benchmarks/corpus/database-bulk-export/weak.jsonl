@@ -1,0 +1,2 @@
+{"id":"positive-minimal","expected":true,"event":{"operation":"COPY_TO","object_type":"table","rows_returned":100000,"client_app":"psql","database_user":"analyst"}}
+{"id":"negative-distant","expected":false,"event":{"operation":"SELECT","object_type":"view","rows_returned":10,"client_app":"dashboard","database_user":"reader"}}

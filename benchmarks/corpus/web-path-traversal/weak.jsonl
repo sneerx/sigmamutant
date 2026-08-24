@@ -1,0 +1,2 @@
+{"id":"positive-minimal","expected":true,"event":{"http_method":"GET","url_path":"../","http_status":400,"user_agent":"browser"}}
+{"id":"negative-distant","expected":false,"event":{"http_method":"GET","url_path":"/index.html","http_status":200,"user_agent":"browser"}}

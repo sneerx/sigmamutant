@@ -1,0 +1,2 @@
+{"id":"positive-minimal","expected":true,"event":{"Image":"/osascript","CommandLine":" -e ","ParentImage":"/Terminal","SigningId":"unsigned"}}
+{"id":"negative-distant","expected":false,"event":{"Image":"/usr/bin/open","CommandLine":"open README.txt","ParentImage":"/Finder","SigningId":"apple"}}

@@ -1,0 +1,8 @@
+{"id":"positive-get-secret-kubectl","expected":true,"event":{"verb":"get","resource":"secrets","user_agent":"kubectl/1.35","response_code":200,"actor":"developer"}}
+{"id":"positive-list-configmap-client-go","expected":true,"event":{"verb":"list","resource":"configmaps","user_agent":"custom-client-go/1.0","response_code":206,"actor":"auditor"}}
+{"id":"negative-verb","expected":false,"event":{"verb":"watch","resource":"secrets","user_agent":"kubectl/1.35","response_code":200,"actor":"developer"}}
+{"id":"negative-resource","expected":false,"event":{"verb":"get","resource":"pods","user_agent":"kubectl/1.35","response_code":200,"actor":"developer"}}
+{"id":"negative-agent","expected":false,"event":{"verb":"get","resource":"secrets","user_agent":"browser","response_code":200,"actor":"developer"}}
+{"id":"negative-response","expected":false,"event":{"verb":"get","resource":"secrets","user_agent":"kubectl/1.35","response_code":0,"actor":"developer"}}
+{"id":"negative-system-account","expected":false,"event":{"verb":"get","resource":"secrets","user_agent":"kubectl/1.35","response_code":200,"actor":"system:serviceaccount:kube-system:controller"}}
+{"id":"negative-distant","expected":false,"event":{"verb":"watch","resource":"pods","user_agent":"controller","response_code":101,"actor":"system"}}

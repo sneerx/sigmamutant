@@ -1,0 +1,2 @@
+{"id":"positive-minimal","expected":true,"event":{"SourceImage":"\\procdump.exe","TargetImage":"\\sensitive-auth.exe","GrantedAccess":"0x1010","SourceSigner":"Unsigned"}}
+{"id":"negative-distant","expected":false,"event":{"SourceImage":"notepad.exe","TargetImage":"text-service.exe","GrantedAccess":"0x0010","SourceSigner":"Vendor"}}

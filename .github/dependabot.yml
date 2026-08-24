@@ -1,0 +1,10 @@
+version: 2
+updates:
+  # Runtime constraints are updated manually because the reproducible
+  # evaluation records exact dependency versions and must be regenerated in
+  # the same review.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5

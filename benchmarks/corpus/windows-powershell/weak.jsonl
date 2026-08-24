@@ -1,0 +1,2 @@
+{"id":"positive-minimal","expected":true,"event":{"Image":"\\powershell.exe","CommandLine":" -EncodedCommand ","ParentImage":"explorer.exe"}}
+{"id":"negative-distant","expected":false,"event":{"Image":"calc.exe","CommandLine":"calc.exe","ParentImage":"explorer.exe"}}

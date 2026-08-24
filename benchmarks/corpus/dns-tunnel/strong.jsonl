@@ -1,0 +1,6 @@
+{"id":"positive-exfil-txt","expected":true,"event":{"query":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.invalid-exfil.test","query_length":59,"record_type":"TXT"}}
+{"id":"positive-tunnel-null","expected":true,"event":{"query":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.invalid-tunnel.test","query_length":60,"record_type":"NULL"}}
+{"id":"negative-short-query","expected":false,"event":{"query":"a.invalid-exfil.test","query_length":20,"record_type":"TXT"}}
+{"id":"negative-wrong-suffix","expected":false,"event":{"query":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.example.com","query_length":52,"record_type":"TXT"}}
+{"id":"negative-wrong-type","expected":false,"event":{"query":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.invalid-exfil.test","query_length":59,"record_type":"A"}}
+{"id":"negative-distant","expected":false,"event":{"query":"www.example.com","query_length":15,"record_type":"A"}}

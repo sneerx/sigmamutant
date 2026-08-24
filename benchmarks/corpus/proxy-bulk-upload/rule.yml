@@ -1,0 +1,23 @@
+title: Synthetic Large Scripted Proxy Upload
+id: 10000000-0000-4000-8000-000000000010
+status: test
+description: Synthetic normalized proxy-log benchmark rule.
+author: SigmaMutant contributors
+date: 2026-08-24
+logsource:
+  category: proxy
+detection:
+  selection:
+    http_method:
+      - POST
+      - PUT
+    bytes_out|gte: 1000000
+    user_agent|contains:
+      - 'curl/'
+      - 'python-requests/'
+  filter_backup:
+    destination_domain|endswith: '.approved-backup.invalid'
+  condition: selection and not filter_backup
+falsepositives:
+  - Synthetic benchmark only
+level: medium

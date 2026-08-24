@@ -1,0 +1,21 @@
+title: Synthetic Long DNS Query to Tunnelling Suffix
+id: 10000000-0000-4000-8000-000000000004
+status: test
+description: Synthetic benchmark rule using reserved invalid domains.
+author: SigmaMutant contributors
+date: 2026-08-24
+logsource:
+  category: dns
+detection:
+  selection:
+    query|endswith:
+      - '.invalid-exfil.test'
+      - '.invalid-tunnel.test'
+    query_length|gte: 50
+    record_type:
+      - TXT
+      - 'NULL'
+  condition: selection
+falsepositives:
+  - Synthetic benchmark only
+level: medium

@@ -1,0 +1,26 @@
+title: Synthetic Script Interpreter in Run Key
+id: 10000000-0000-4000-8000-000000000005
+status: test
+description: Synthetic benchmark rule for Windows registry event fixtures.
+author: SigmaMutant contributors
+date: 2026-08-24
+logsource:
+  category: registry_set
+  product: windows
+detection:
+  selection:
+    EventType:
+      - SetValue
+      - CreateValue
+    TargetObject|contains:
+      - '\Software\Microsoft\Windows\CurrentVersion\Run\'
+      - '\Software\Microsoft\Windows\CurrentVersion\RunOnce\'
+    Details|startswith:
+      - powershell.exe
+      - cmd.exe
+  filter_installer:
+    Image|endswith: '\approved-installer.exe'
+  condition: selection and not filter_installer
+falsepositives:
+  - Synthetic benchmark only
+level: high

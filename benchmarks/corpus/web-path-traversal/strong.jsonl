@@ -1,0 +1,7 @@
+{"id":"positive-get-plain","expected":true,"event":{"http_method":"GET","url_path":"/static/../../etc/passwd","http_status":404,"user_agent":"browser"}}
+{"id":"positive-post-encoded","expected":true,"event":{"http_method":"POST","url_path":"/api/..%2fsecret","http_status":500,"user_agent":"client"}}
+{"id":"negative-safe-path","expected":false,"event":{"http_method":"GET","url_path":"/static/app.js","http_status":404,"user_agent":"browser"}}
+{"id":"negative-method","expected":false,"event":{"http_method":"PUT","url_path":"/static/../secret","http_status":404,"user_agent":"browser"}}
+{"id":"negative-success-status","expected":false,"event":{"http_method":"GET","url_path":"/static/../redirect","http_status":302,"user_agent":"browser"}}
+{"id":"negative-approved-scanner","expected":false,"event":{"http_method":"GET","url_path":"/static/../secret","http_status":404,"user_agent":"InternalScanner/2.0"}}
+{"id":"negative-distant","expected":false,"event":{"http_method":"GET","url_path":"/index.html","http_status":200,"user_agent":"browser"}}

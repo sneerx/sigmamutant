@@ -1,0 +1,2 @@
+{"id":"positive-minimal","expected":true,"event":{"Image":"/curl","CommandLine":" | sh","ParentImage":"/sshd","User":"alice"}}
+{"id":"negative-distant","expected":false,"event":{"Image":"/usr/bin/ls","CommandLine":"ls -la","ParentImage":"/usr/bin/bash","User":"alice"}}

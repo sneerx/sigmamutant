@@ -1,0 +1,7 @@
+{"id":"positive-apple-script-terminal","expected":true,"event":{"Image":"/usr/bin/osascript","CommandLine":"osascript -e display-dialog-test","ParentImage":"/System/Applications/Utilities/Terminal","SigningId":"unsigned"}}
+{"id":"positive-javascript-zsh","expected":true,"event":{"Image":"/opt/test/osascript.bin","CommandLine":"osascript.bin -l JavaScript sample.js","ParentImage":"/bin/zsh","SigningId":"unsigned"}}
+{"id":"negative-image","expected":false,"event":{"Image":"/usr/bin/python3","CommandLine":"python3 helper.py -e sample","ParentImage":"/System/Applications/Utilities/Terminal","SigningId":"unsigned"}}
+{"id":"negative-command","expected":false,"event":{"Image":"/usr/bin/osascript","CommandLine":"osascript script.scpt","ParentImage":"/System/Applications/Utilities/Terminal","SigningId":"unsigned"}}
+{"id":"negative-parent","expected":false,"event":{"Image":"/usr/bin/osascript","CommandLine":"osascript -e display-dialog-test","ParentImage":"/System/Library/CoreServices/Finder","SigningId":"unsigned"}}
+{"id":"negative-approved-management","expected":false,"event":{"Image":"/usr/bin/osascript","CommandLine":"osascript -e display-dialog-test","ParentImage":"/System/Applications/Utilities/Terminal","SigningId":"com.example.approved-management.agent"}}
+{"id":"negative-distant","expected":false,"event":{"Image":"/usr/bin/open","CommandLine":"open README.txt","ParentImage":"/Finder","SigningId":"apple"}}

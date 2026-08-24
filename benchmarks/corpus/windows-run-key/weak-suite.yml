@@ -1,0 +1,4 @@
+version: 1
+rule: rule.yml
+fixtures: weak.jsonl
+fail_under: 0.0

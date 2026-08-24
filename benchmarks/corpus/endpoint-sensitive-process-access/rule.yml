@@ -1,0 +1,26 @@
+title: Synthetic Broad Access to Sensitive Process
+id: 10000000-0000-4000-8000-000000000015
+status: test
+description: Synthetic endpoint process-access benchmark rule.
+author: SigmaMutant contributors
+date: 2026-08-24
+logsource:
+  category: process_access
+  product: windows
+detection:
+  selection:
+    SourceImage|endswith:
+      - '\procdump.exe'
+      - '\diagnostic-tool.exe'
+    TargetImage|endswith:
+      - '\sensitive-auth.exe'
+      - '\credential-service.exe'
+    GrantedAccess:
+      - '0x1010'
+      - '0x1fffff'
+  filter_signer:
+    SourceSigner|startswith: 'Example Approved Diagnostics '
+  condition: selection and not filter_signer
+falsepositives:
+  - Synthetic benchmark only
+level: high

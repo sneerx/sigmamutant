@@ -1,0 +1,7 @@
+{"id":"positive-role-directory-user","expected":true,"event":{"operation":"AddAppRoleAssignment","permission":"scope Directory.ReadWrite.All delegated","actor_type":"user","actor":"admin"}}
+{"id":"positive-consent-mail-service","expected":true,"event":{"operation":"ConsentToApplication","permission":"application Mail.ReadWrite scope","actor_type":"service_principal","actor":"build-app"}}
+{"id":"negative-operation","expected":false,"event":{"operation":"ReadApplication","permission":"scope Directory.ReadWrite.All delegated","actor_type":"user","actor":"admin"}}
+{"id":"negative-permission","expected":false,"event":{"operation":"AddAppRoleAssignment","permission":"User.Read","actor_type":"user","actor":"admin"}}
+{"id":"negative-actor-type","expected":false,"event":{"operation":"AddAppRoleAssignment","permission":"scope Directory.ReadWrite.All delegated","actor_type":"application","actor":"admin"}}
+{"id":"negative-approved-automation","expected":false,"event":{"operation":"AddAppRoleAssignment","permission":"scope Directory.ReadWrite.All delegated","actor_type":"user","actor":"approved-consent-automation-prod"}}
+{"id":"negative-distant","expected":false,"event":{"operation":"ReadApplication","permission":"User.Read","actor_type":"application","actor":"reader"}}

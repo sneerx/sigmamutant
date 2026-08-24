@@ -1,0 +1,6 @@
+{"id":"positive-powershell-long-switch","expected":true,"event":{"Image":"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe","CommandLine":"powershell.exe -NoProfile -EncodedCommand AAAA","ParentImage":"C:\\Windows\\explorer.exe"}}
+{"id":"positive-pwsh-short-switch","expected":true,"event":{"Image":"C:\\Program Files\\PowerShell\\7\\pwsh.exe","CommandLine":"pwsh.exe -NoLogo -enc BBBB","ParentImage":"C:\\Windows\\System32\\cmd.exe"}}
+{"id":"negative-missing-command-token","expected":false,"event":{"Image":"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe","CommandLine":"powershell.exe -File inventory.ps1","ParentImage":"C:\\Windows\\explorer.exe"}}
+{"id":"negative-missing-shell-image","expected":false,"event":{"Image":"C:\\Windows\\System32\\cmd.exe","CommandLine":"cmd.exe /c echo -EncodedCommand AAAA","ParentImage":"C:\\Windows\\explorer.exe"}}
+{"id":"negative-approved-parent","expected":false,"event":{"Image":"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe","CommandLine":"powershell.exe -EncodedCommand AAAA","ParentImage":"C:\\Tools\\approved-deployer.exe"}}
+{"id":"negative-distant","expected":false,"event":{"Image":"calc.exe","CommandLine":"calc.exe","ParentImage":"explorer.exe"}}

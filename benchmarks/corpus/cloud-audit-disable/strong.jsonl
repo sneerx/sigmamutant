@@ -1,0 +1,7 @@
+{"id":"positive-stop-logging","expected":true,"event":{"event_name":"StopLogging","event_source":"api.cloudtrail.amazonaws.com","outcome":"success","actor":"human-admin"}}
+{"id":"positive-delete-trail","expected":true,"event":{"event_name":"DeleteTrail","event_source":"control.audit.invalid","outcome":"succeeded","actor":"breakglass-user"}}
+{"id":"negative-operation","expected":false,"event":{"event_name":"DescribeTrails","event_source":"api.cloudtrail.amazonaws.com","outcome":"success","actor":"human-admin"}}
+{"id":"negative-source","expected":false,"event":{"event_name":"StopLogging","event_source":"monitoring.example","outcome":"success","actor":"human-admin"}}
+{"id":"negative-outcome","expected":false,"event":{"event_name":"StopLogging","event_source":"api.cloudtrail.amazonaws.com","outcome":"denied","actor":"human-admin"}}
+{"id":"negative-approved-role","expected":false,"event":{"event_name":"StopLogging","event_source":"api.cloudtrail.amazonaws.com","outcome":"success","actor":"approved-deployment-audit"}}
+{"id":"negative-distant","expected":false,"event":{"event_name":"DescribeTrails","event_source":"monitoring.example","outcome":"success","actor":"admin"}}

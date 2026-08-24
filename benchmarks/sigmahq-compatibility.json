@@ -1,0 +1,907 @@
+{
+  "engine": {
+    "dependencies": {
+      "azuma": "0.7.3",
+      "pysigma": "1.5.0",
+      "ruamel.yaml": "0.18.17",
+      "sigmamutant": "1.0.0"
+    },
+    "operators": [
+      "delete_predicate",
+      "delete_list_item",
+      "modifier_to_exact",
+      "list_any_to_all",
+      "condition_and_to_or",
+      "condition_remove_not"
+    ]
+  },
+  "interpretation": {
+    "does_not_measure": "detection accuracy, telemetry realism, backend equivalence, fixture quality, or mutation score",
+    "measures": "rule parsing, declared-subset acceptance, evaluator validation, and mutation-operator applicability"
+  },
+  "logsources": {
+    "antivirus": {
+      "evaluator_supported": 4,
+      "mutation_applicable": 4,
+      "parsed": 9,
+      "subset_rejected": 5,
+      "subset_supported": 4
+    },
+    "apache": {
+      "parsed": 2,
+      "subset_rejected": 2
+    },
+    "aws/cloudtrail": {
+      "evaluator_supported": 54,
+      "mutation_applicable": 53,
+      "parsed": 57,
+      "subset_rejected": 3,
+      "subset_supported": 54,
+      "supported_no_mutants": 1
+    },
+    "azure/activitylogs": {
+      "evaluator_supported": 32,
+      "mutation_applicable": 27,
+      "parsed": 35,
+      "subset_rejected": 3,
+      "subset_supported": 32,
+      "supported_no_mutants": 5
+    },
+    "azure/auditlogs": {
+      "evaluator_supported": 44,
+      "mutation_applicable": 27,
+      "parsed": 44,
+      "subset_supported": 44,
+      "supported_no_mutants": 17
+    },
+    "azure/pim": {
+      "evaluator_supported": 7,
+      "parsed": 7,
+      "subset_supported": 7,
+      "supported_no_mutants": 7
+    },
+    "azure/riskdetection": {
+      "evaluator_supported": 19,
+      "parsed": 19,
+      "subset_supported": 19,
+      "supported_no_mutants": 19
+    },
+    "azure/signinlogs": {
+      "evaluator_supported": 19,
+      "mutation_applicable": 14,
+      "parsed": 19,
+      "subset_supported": 19,
+      "supported_no_mutants": 5
+    },
+    "bitbucket/audit": {
+      "evaluator_supported": 14,
+      "mutation_applicable": 14,
+      "parsed": 14,
+      "subset_supported": 14
+    },
+    "cisco/aaa": {
+      "parsed": 13,
+      "subset_rejected": 13
+    },
+    "cisco/bgp": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "cisco/duo": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "cisco/ldp": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "cisco/syslog": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "database": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "django/application": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "dns": {
+      "evaluator_supported": 11,
+      "mutation_applicable": 10,
+      "parsed": 11,
+      "subset_supported": 11,
+      "supported_no_mutants": 1
+    },
+    "firewall": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 2,
+      "subset_rejected": 1,
+      "subset_supported": 1
+    },
+    "fortigate/event": {
+      "evaluator_supported": 7,
+      "mutation_applicable": 7,
+      "parsed": 7,
+      "subset_supported": 7
+    },
+    "fortios/sslvpnd": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "gcp/gcp.audit": {
+      "evaluator_supported": 15,
+      "mutation_applicable": 14,
+      "parsed": 16,
+      "subset_rejected": 1,
+      "subset_supported": 15,
+      "supported_no_mutants": 1
+    },
+    "gcp/google_workspace.admin": {
+      "evaluator_supported": 7,
+      "mutation_applicable": 7,
+      "parsed": 7,
+      "subset_supported": 7
+    },
+    "gcp/google_workspace.login": {
+      "evaluator_supported": 3,
+      "mutation_applicable": 3,
+      "parsed": 3,
+      "subset_supported": 3
+    },
+    "github/audit": {
+      "evaluator_supported": 15,
+      "mutation_applicable": 14,
+      "parsed": 15,
+      "subset_supported": 15,
+      "supported_no_mutants": 1
+    },
+    "huawei/bgp": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "juniper/bgp": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "jvm/application": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 5,
+      "subset_rejected": 4,
+      "subset_supported": 1
+    },
+    "kubernetes/application/audit": {
+      "evaluator_supported": 4,
+      "mutation_applicable": 4,
+      "parsed": 10,
+      "subset_rejected": 6,
+      "subset_supported": 4
+    },
+    "kubernetes/audit": {
+      "evaluator_supported": 5,
+      "mutation_applicable": 5,
+      "parsed": 6,
+      "subset_rejected": 1,
+      "subset_supported": 5
+    },
+    "linux": {
+      "evaluator_supported": 2,
+      "mutation_applicable": 2,
+      "parsed": 16,
+      "subset_rejected": 14,
+      "subset_supported": 2
+    },
+    "linux/auditd": {
+      "evaluator_supported": 48,
+      "mutation_applicable": 47,
+      "parsed": 54,
+      "subset_rejected": 6,
+      "subset_supported": 48,
+      "supported_no_mutants": 1
+    },
+    "linux/auth": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "linux/clamav": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "linux/cron": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "linux/file_event": {
+      "evaluator_supported": 15,
+      "mutation_applicable": 14,
+      "parsed": 18,
+      "subset_rejected": 3,
+      "subset_supported": 15,
+      "supported_no_mutants": 1
+    },
+    "linux/guacamole": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "linux/network_connection": {
+      "evaluator_supported": 4,
+      "mutation_applicable": 4,
+      "parsed": 5,
+      "subset_rejected": 1,
+      "subset_supported": 4
+    },
+    "linux/process_creation": {
+      "evaluator_rejected": 1,
+      "evaluator_supported": 124,
+      "mutation_applicable": 124,
+      "parsed": 144,
+      "subset_rejected": 19,
+      "subset_supported": 125
+    },
+    "linux/sshd": {
+      "parsed": 3,
+      "subset_rejected": 3
+    },
+    "linux/sudo": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "linux/syslog": {
+      "parsed": 2,
+      "subset_rejected": 2
+    },
+    "linux/vsftpd": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "m365/audit": {
+      "evaluator_supported": 5,
+      "mutation_applicable": 5,
+      "parsed": 6,
+      "subset_rejected": 1,
+      "subset_supported": 5
+    },
+    "m365/exchange": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "m365/threat_detection": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "m365/threat_management": {
+      "evaluator_supported": 13,
+      "mutation_applicable": 13,
+      "parsed": 13,
+      "subset_supported": 13
+    },
+    "macos/file_event": {
+      "evaluator_supported": 4,
+      "mutation_applicable": 4,
+      "parsed": 5,
+      "subset_rejected": 1,
+      "subset_supported": 4
+    },
+    "macos/process_creation": {
+      "evaluator_supported": 59,
+      "mutation_applicable": 58,
+      "parsed": 70,
+      "subset_rejected": 11,
+      "subset_supported": 59,
+      "supported_no_mutants": 1
+    },
+    "nginx": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "nodejs/application": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "okta/okta": {
+      "evaluator_supported": 21,
+      "mutation_applicable": 12,
+      "parsed": 23,
+      "subset_rejected": 2,
+      "subset_supported": 21,
+      "supported_no_mutants": 9
+    },
+    "onelogin/onelogin.events": {
+      "evaluator_supported": 2,
+      "parsed": 2,
+      "subset_supported": 2,
+      "supported_no_mutants": 2
+    },
+    "opencanary/application": {
+      "evaluator_supported": 24,
+      "parsed": 24,
+      "subset_supported": 24,
+      "supported_no_mutants": 24
+    },
+    "paloalto/appliance/globalprotect": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "paloalto/file_event/globalprotect": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "proxy": {
+      "evaluator_supported": 47,
+      "mutation_applicable": 46,
+      "parsed": 56,
+      "subset_rejected": 9,
+      "subset_supported": 47,
+      "supported_no_mutants": 1
+    },
+    "python/application": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "rpc_firewall/application": {
+      "evaluator_supported": 17,
+      "mutation_applicable": 17,
+      "parsed": 17,
+      "subset_supported": 17
+    },
+    "ruby_on_rails/application": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "spring/application": {
+      "parsed": 2,
+      "subset_rejected": 2
+    },
+    "sql/application": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "velocity/application": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "webserver": {
+      "evaluator_supported": 60,
+      "mutation_applicable": 56,
+      "parsed": 86,
+      "subset_rejected": 26,
+      "subset_supported": 60,
+      "supported_no_mutants": 4
+    },
+    "windows": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "windows/application": {
+      "evaluator_supported": 29,
+      "mutation_applicable": 29,
+      "parsed": 32,
+      "subset_rejected": 3,
+      "subset_supported": 29
+    },
+    "windows/applocker": {
+      "evaluator_supported": 2,
+      "mutation_applicable": 2,
+      "parsed": 2,
+      "subset_supported": 2
+    },
+    "windows/appmodel-runtime": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "windows/appxdeployment-server": {
+      "evaluator_supported": 9,
+      "mutation_applicable": 7,
+      "parsed": 10,
+      "subset_rejected": 1,
+      "subset_supported": 9,
+      "supported_no_mutants": 2
+    },
+    "windows/appxpackaging-om": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "windows/bits-client": {
+      "evaluator_supported": 7,
+      "mutation_applicable": 7,
+      "parsed": 7,
+      "subset_supported": 7
+    },
+    "windows/capi2": {
+      "evaluator_supported": 1,
+      "parsed": 1,
+      "subset_supported": 1,
+      "supported_no_mutants": 1
+    },
+    "windows/certificateservicesclient-lifecycle-system": {
+      "evaluator_supported": 1,
+      "parsed": 1,
+      "subset_supported": 1,
+      "supported_no_mutants": 1
+    },
+    "windows/codeintegrity-operational": {
+      "evaluator_supported": 9,
+      "mutation_applicable": 3,
+      "parsed": 10,
+      "subset_rejected": 1,
+      "subset_supported": 9,
+      "supported_no_mutants": 6
+    },
+    "windows/create_remote_thread": {
+      "evaluator_supported": 15,
+      "mutation_applicable": 15,
+      "parsed": 15,
+      "subset_supported": 15
+    },
+    "windows/create_stream_hash": {
+      "evaluator_supported": 7,
+      "mutation_applicable": 7,
+      "parsed": 9,
+      "subset_rejected": 2,
+      "subset_supported": 7
+    },
+    "windows/diagnosis-scripted": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "windows/dns-client": {
+      "evaluator_supported": 6,
+      "mutation_applicable": 6,
+      "parsed": 6,
+      "subset_supported": 6
+    },
+    "windows/dns-server": {
+      "evaluator_supported": 2,
+      "mutation_applicable": 1,
+      "parsed": 2,
+      "subset_supported": 2,
+      "supported_no_mutants": 1
+    },
+    "windows/dns-server-analytic": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "windows/dns_query": {
+      "evaluator_supported": 23,
+      "mutation_applicable": 22,
+      "parsed": 28,
+      "subset_rejected": 5,
+      "subset_supported": 23,
+      "supported_no_mutants": 1
+    },
+    "windows/driver-framework": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "windows/driver_load": {
+      "evaluator_supported": 5,
+      "mutation_applicable": 5,
+      "parsed": 10,
+      "subset_rejected": 5,
+      "subset_supported": 5
+    },
+    "windows/file_access": {
+      "evaluator_supported": 11,
+      "mutation_applicable": 11,
+      "parsed": 13,
+      "subset_rejected": 2,
+      "subset_supported": 11
+    },
+    "windows/file_change": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 2,
+      "subset_rejected": 1,
+      "subset_supported": 1
+    },
+    "windows/file_delete": {
+      "evaluator_supported": 13,
+      "mutation_applicable": 13,
+      "parsed": 14,
+      "subset_rejected": 1,
+      "subset_supported": 13
+    },
+    "windows/file_event": {
+      "evaluator_supported": 184,
+      "mutation_applicable": 178,
+      "parsed": 220,
+      "subset_rejected": 36,
+      "subset_supported": 184,
+      "supported_no_mutants": 6
+    },
+    "windows/file_executable_detected": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "windows/file_rename": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 2,
+      "subset_rejected": 1,
+      "subset_supported": 1
+    },
+    "windows/firewall-as": {
+      "evaluator_supported": 8,
+      "mutation_applicable": 7,
+      "parsed": 9,
+      "subset_rejected": 1,
+      "subset_supported": 8,
+      "supported_no_mutants": 1
+    },
+    "windows/iis-configuration": {
+      "evaluator_supported": 4,
+      "mutation_applicable": 4,
+      "parsed": 4,
+      "subset_supported": 4
+    },
+    "windows/image_load": {
+      "evaluator_supported": 104,
+      "mutation_applicable": 103,
+      "parsed": 125,
+      "subset_rejected": 21,
+      "subset_supported": 104,
+      "supported_no_mutants": 1
+    },
+    "windows/ldap": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "windows/lsa-server": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "windows/microsoft-servicebus-client": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "windows/msexchange-management": {
+      "evaluator_supported": 4,
+      "mutation_applicable": 4,
+      "parsed": 8,
+      "subset_rejected": 4,
+      "subset_supported": 4
+    },
+    "windows/network_connection": {
+      "evaluator_supported": 53,
+      "mutation_applicable": 53,
+      "parsed": 61,
+      "subset_rejected": 8,
+      "subset_supported": 53
+    },
+    "windows/ntlm": {
+      "evaluator_supported": 3,
+      "mutation_applicable": 2,
+      "parsed": 3,
+      "subset_supported": 3,
+      "supported_no_mutants": 1
+    },
+    "windows/openssh": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "windows/pipe_created": {
+      "evaluator_supported": 16,
+      "mutation_applicable": 14,
+      "parsed": 20,
+      "subset_rejected": 4,
+      "subset_supported": 16,
+      "supported_no_mutants": 2
+    },
+    "windows/powershell-classic": {
+      "evaluator_supported": 2,
+      "mutation_applicable": 2,
+      "parsed": 3,
+      "subset_rejected": 1,
+      "subset_supported": 2
+    },
+    "windows/printservice-admin": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "windows/printservice-operational": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "windows/process_access": {
+      "evaluator_supported": 25,
+      "mutation_applicable": 25,
+      "parsed": 29,
+      "subset_rejected": 4,
+      "subset_supported": 25
+    },
+    "windows/process_creation": {
+      "evaluator_supported": 650,
+      "mutation_applicable": 647,
+      "parsed": 1417,
+      "subset_rejected": 767,
+      "subset_supported": 650,
+      "supported_no_mutants": 3
+    },
+    "windows/process_tampering": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "windows/ps_classic_provider_start": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "windows/ps_classic_start": {
+      "evaluator_supported": 10,
+      "mutation_applicable": 10,
+      "parsed": 11,
+      "subset_rejected": 1,
+      "subset_supported": 10
+    },
+    "windows/ps_module": {
+      "evaluator_supported": 23,
+      "mutation_applicable": 23,
+      "parsed": 34,
+      "subset_rejected": 11,
+      "subset_supported": 23
+    },
+    "windows/ps_script": {
+      "evaluator_supported": 165,
+      "mutation_applicable": 165,
+      "parsed": 179,
+      "subset_rejected": 14,
+      "subset_supported": 165
+    },
+    "windows/raw_access_thread": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "windows/registry_add": {
+      "evaluator_supported": 3,
+      "mutation_applicable": 3,
+      "parsed": 3,
+      "subset_supported": 3
+    },
+    "windows/registry_delete": {
+      "evaluator_supported": 8,
+      "mutation_applicable": 8,
+      "parsed": 10,
+      "subset_rejected": 2,
+      "subset_supported": 8
+    },
+    "windows/registry_event": {
+      "evaluator_supported": 36,
+      "mutation_applicable": 36,
+      "parsed": 41,
+      "subset_rejected": 5,
+      "subset_supported": 36
+    },
+    "windows/registry_set": {
+      "evaluator_rejected": 1,
+      "evaluator_supported": 184,
+      "mutation_applicable": 183,
+      "parsed": 224,
+      "subset_rejected": 39,
+      "subset_supported": 185,
+      "supported_no_mutants": 1
+    },
+    "windows/security": {
+      "evaluator_supported": 149,
+      "mutation_applicable": 141,
+      "parsed": 167,
+      "subset_rejected": 18,
+      "subset_supported": 149,
+      "supported_no_mutants": 8
+    },
+    "windows/security-mitigations": {
+      "evaluator_supported": 2,
+      "mutation_applicable": 2,
+      "parsed": 2,
+      "subset_supported": 2
+    },
+    "windows/shell-core": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "windows/smbclient-connectivity": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "windows/smbclient-security": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "windows/smbserver-connectivity": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "windows/sysmon": {
+      "evaluator_supported": 4,
+      "parsed": 4,
+      "subset_supported": 4,
+      "supported_no_mutants": 4
+    },
+    "windows/sysmon_error": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "windows/sysmon_status": {
+      "parsed": 1,
+      "subset_rejected": 1
+    },
+    "windows/system": {
+      "evaluator_supported": 54,
+      "mutation_applicable": 54,
+      "parsed": 74,
+      "subset_rejected": 20,
+      "subset_supported": 54
+    },
+    "windows/taskscheduler": {
+      "evaluator_supported": 4,
+      "mutation_applicable": 4,
+      "parsed": 4,
+      "subset_supported": 4
+    },
+    "windows/terminalservices-localsessionmanager": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "windows/windefend": {
+      "evaluator_supported": 16,
+      "mutation_applicable": 10,
+      "parsed": 17,
+      "subset_rejected": 1,
+      "subset_supported": 16,
+      "supported_no_mutants": 6
+    },
+    "windows/wmi": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 2,
+      "subset_rejected": 1,
+      "subset_supported": 1
+    },
+    "windows/wmi_event": {
+      "evaluator_supported": 2,
+      "mutation_applicable": 2,
+      "parsed": 3,
+      "subset_rejected": 1,
+      "subset_supported": 2
+    },
+    "zeek/dce_rpc": {
+      "evaluator_supported": 4,
+      "mutation_applicable": 4,
+      "parsed": 4,
+      "subset_supported": 4
+    },
+    "zeek/dns": {
+      "evaluator_supported": 5,
+      "mutation_applicable": 5,
+      "parsed": 5,
+      "subset_supported": 5
+    },
+    "zeek/http": {
+      "evaluator_supported": 4,
+      "mutation_applicable": 4,
+      "parsed": 5,
+      "subset_rejected": 1,
+      "subset_supported": 4
+    },
+    "zeek/kerberos": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "zeek/rdp": {
+      "evaluator_supported": 1,
+      "mutation_applicable": 1,
+      "parsed": 1,
+      "subset_supported": 1
+    },
+    "zeek/smb_files": {
+      "evaluator_supported": 6,
+      "mutation_applicable": 6,
+      "parsed": 7,
+      "subset_rejected": 1,
+      "subset_supported": 6
+    },
+    "zeek/x509": {
+      "evaluator_supported": 1,
+      "parsed": 1,
+      "subset_supported": 1,
+      "supported_no_mutants": 1
+    }
+  },
+  "mutants_by_operator": {
+    "condition_and_to_or": 825,
+    "condition_remove_not": 620,
+    "delete_list_item": 27583,
+    "delete_predicate": 4525,
+    "list_any_to_all": 2142,
+    "modifier_to_exact": 4908
+  },
+  "rejection_reasons": {
+    "keyword_only_selector": 979,
+    "pysigma_rejected": 2,
+    "unsupported_modifier": 77,
+    "value_placeholder": 90
+  },
+  "schema_version": 1,
+  "source": {
+    "name": "SigmaHQ/sigma",
+    "revision": "da9bb07d642a2826e89702445d32c795209ec108",
+    "scopes": [
+      "rules",
+      "rules-emerging-threats",
+      "rules-threat-hunting"
+    ],
+    "tree_sha256": "a1753e8b726ccc8ac12764f222a0f31eee25bec3e040179ef471f8d310f5632b",
+    "url": "https://github.com/SigmaHQ/sigma"
+  },
+  "status_counts": {
+    "evaluator_rejected": 2,
+    "evaluator_supported": 2609,
+    "mutation_applicable": 2463,
+    "parsed": 3757,
+    "subset_rejected": 1146,
+    "subset_supported": 2611,
+    "supported_no_mutants": 146
+  },
+  "summary": {
+    "evaluator_support_rate": 0.6944370508384349,
+    "evaluator_supported": 2609,
+    "mutants_generated": 40603,
+    "mutation_applicability_rate": 0.6555762576523823,
+    "mutation_applicable": 2463,
+    "parsed": 3757,
+    "rule_files": 3757,
+    "subset_supported": 2611,
+    "supported_no_mutants": 146
+  }
+}

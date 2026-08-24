@@ -1,0 +1,2 @@
+{"id":"positive-minimal","expected":true,"event":{"verb":"get","resource":"secrets","user_agent":"kubectl/","response_code":200,"actor":"developer"}}
+{"id":"negative-distant","expected":false,"event":{"verb":"watch","resource":"pods","user_agent":"controller","response_code":101,"actor":"system"}}

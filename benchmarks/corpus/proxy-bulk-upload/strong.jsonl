@@ -1,0 +1,7 @@
+{"id":"positive-post-curl","expected":true,"event":{"http_method":"POST","bytes_out":1500000,"user_agent":"curl/9.0","destination_domain":"upload.invalid"}}
+{"id":"positive-put-python","expected":true,"event":{"http_method":"PUT","bytes_out":2000000,"user_agent":"python-requests/3.0","destination_domain":"objects.invalid"}}
+{"id":"negative-method","expected":false,"event":{"http_method":"GET","bytes_out":1500000,"user_agent":"curl/9.0","destination_domain":"upload.invalid"}}
+{"id":"negative-small-transfer","expected":false,"event":{"http_method":"POST","bytes_out":10000,"user_agent":"curl/9.0","destination_domain":"upload.invalid"}}
+{"id":"negative-user-agent","expected":false,"event":{"http_method":"POST","bytes_out":1500000,"user_agent":"browser","destination_domain":"upload.invalid"}}
+{"id":"negative-approved-backup","expected":false,"event":{"http_method":"POST","bytes_out":1500000,"user_agent":"curl/9.0","destination_domain":"daily.approved-backup.invalid"}}
+{"id":"negative-distant","expected":false,"event":{"http_method":"GET","bytes_out":1000,"user_agent":"browser","destination_domain":"www.example.com"}}
