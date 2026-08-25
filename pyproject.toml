@@ -5,14 +5,21 @@ build-backend = "hatchling.build"
 [project]
 name = "sigmamutant"
 version = "1.0.0"
-description = "Mutation testing for Sigma detection rules and their labelled event fixtures"
+description = "Two-sided mutation and event-gap testing for Sigma detection contracts"
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
 license = { file = "LICENSE" }
 authors = [
   { name = "SigmaMutant contributors" },
 ]
-keywords = ["sigma", "security", "detection-engineering", "mutation-testing", "blue-team"]
+keywords = [
+  "sigma",
+  "security",
+  "detection-engineering",
+  "mutation-testing",
+  "event-variation",
+  "blue-team",
+]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Environment :: Console",
@@ -95,10 +102,14 @@ packages = ["src/sigmamutant"]
 
 [tool.hatch.build.targets.wheel.force-include]
 "examples/rules/powershell_encoded.yml" = "sigmamutant/_example_data/rules/powershell_encoded.yml"
+"examples/rules/powershell_encoded_hardened.yml" = "sigmamutant/_example_data/rules/powershell_encoded_hardened.yml"
 "examples/fixtures/weak.jsonl" = "sigmamutant/_example_data/fixtures/weak.jsonl"
 "examples/fixtures/strong.jsonl" = "sigmamutant/_example_data/fixtures/strong.jsonl"
+"examples/fixtures/gap.jsonl" = "sigmamutant/_example_data/fixtures/gap.jsonl"
 "examples/weak-suite.yml" = "sigmamutant/_example_data/weak-suite.yml"
 "examples/strong-suite.yml" = "sigmamutant/_example_data/strong-suite.yml"
+"examples/powershell-gap.yml" = "sigmamutant/_example_data/powershell-gap.yml"
+"examples/powershell-hardened-gap.yml" = "sigmamutant/_example_data/powershell-hardened-gap.yml"
 
 [tool.pytest.ini_options]
 addopts = "-ra --strict-markers"

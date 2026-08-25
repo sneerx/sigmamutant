@@ -197,3 +197,13 @@ jobs:
         run: |
           python -m sigmamutant init-example wheel-example
           python -m sigmamutant validate wheel-example/strong-suite.yml
+      - name: Exercise wheel-contained weak and hardened gap examples
+        run: >-
+          python -c "import pathlib, subprocess, sys;
+          root=pathlib.Path('wheel-example');
+          weak=subprocess.run([sys.executable, '-m', 'sigmamutant', 'gap', str(root / 'powershell-gap.yml'), '--out', 'wheel-gap-weak']);
+          hardened=subprocess.run([sys.executable, '-m', 'sigmamutant', 'gap', str(root / 'powershell-hardened-gap.yml'), '--out', 'wheel-gap-hardened']);
+          assert weak.returncode == 1, f'weak gap returned {weak.returncode}, expected 1';
+          assert hardened.returncode == 0, f'hardened gap returned {hardened.returncode}, expected 0';
+          assert pathlib.Path('wheel-gap-weak/gap-report.json').is_file();
+          assert pathlib.Path('wheel-gap-hardened/gap-report.json').is_file()"

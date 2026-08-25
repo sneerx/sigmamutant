@@ -48,7 +48,8 @@ class DemoStep:
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Run the weak-to-strong, repository, and evaluation demos entirely offline."
+            "Run both weak-to-strong axes, repository checks, and evaluation "
+            "evidence entirely offline."
         )
     )
     parser.add_argument(
@@ -65,7 +66,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--quick",
         action="store_true",
-        help="run only the weak and strong suites",
+        help="run only the weak/strong mutation and event-gap examples",
     )
     parser.add_argument(
         "--no-color",
@@ -101,6 +102,14 @@ def _report_artifacts(directory: Path) -> tuple[Path, ...]:
     )
 
 
+def _gap_report_artifacts(directory: Path) -> tuple[Path, ...]:
+    return (
+        directory / "gap-report.html",
+        directory / "gap-report.json",
+        directory / "gap-junit.xml",
+    )
+
+
 def _build_steps(
     output: Path,
     *,
@@ -109,6 +118,8 @@ def _build_steps(
 ) -> tuple[DemoStep, ...]:
     weak_output = output / "weak"
     strong_output = output / "strong"
+    weak_gap_output = output / "weak-gap"
+    hardened_gap_output = output / "hardened-gap"
     progress = ("--verbose",) if verbose else ()
     steps = [
         DemoStep(
@@ -135,6 +146,31 @@ def _build_steps(
             ),
             expected_exit=0,
             artifacts=_report_artifacts(strong_output),
+        ),
+        DemoStep(
+            name="weak rule exposes deterministic event-variation gaps",
+            command=_cli_command(
+                "gap",
+                str(EXAMPLES / "powershell-gap.yml"),
+                "--out",
+                str(weak_gap_output),
+                *progress,
+            ),
+            expected_exit=1,
+            artifacts=_gap_report_artifacts(weak_gap_output),
+            expected_quality_failure=True,
+        ),
+        DemoStep(
+            name="hardened rule closes the bounded event-variation gaps",
+            command=_cli_command(
+                "gap",
+                str(EXAMPLES / "powershell-hardened-gap.yml"),
+                "--out",
+                str(hardened_gap_output),
+                *progress,
+            ),
+            expected_exit=0,
+            artifacts=_gap_report_artifacts(hardened_gap_output),
         ),
     ]
     if quick:
@@ -231,6 +267,8 @@ def main(argv: list[str] | None = None) -> int:
     required_inputs = (
         EXAMPLES / "weak-suite.yml",
         EXAMPLES / "strong-suite.yml",
+        EXAMPLES / "powershell-gap.yml",
+        EXAMPLES / "powershell-hardened-gap.yml",
         EVALUATION_SCRIPT,
     )
     missing_inputs = _missing_artifacts(required_inputs)
@@ -291,9 +329,7 @@ def main(argv: list[str] | None = None) -> int:
 
     print()
     print(_paint("DEMO PASS", "32", enabled=color))
-    print(
-        "Expected exit 1 results above are mutation quality signals, not tool errors."
-    )
+    print("Expected exit 1 results above are quality signals, not tool errors.")
     return 0
 
 

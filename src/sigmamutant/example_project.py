@@ -14,10 +14,14 @@ from sigmamutant.reporting._common import (
 
 EXAMPLE_FILES = (
     "rules/powershell_encoded.yml",
+    "rules/powershell_encoded_hardened.yml",
     "fixtures/weak.jsonl",
     "fixtures/strong.jsonl",
+    "fixtures/gap.jsonl",
     "weak-suite.yml",
     "strong-suite.yml",
+    "powershell-gap.yml",
+    "powershell-hardened-gap.yml",
 )
 
 
@@ -67,7 +71,7 @@ def _preflight_destination(destination: Path) -> None:
 
 
 def initialize_example(destination: str | Path) -> Path:
-    """Create a deterministic weak/strong example and return its directory."""
+    """Create deterministic mutation and event-gap examples."""
 
     output = _absolute_without_resolving(destination)
     payloads = tuple((name, _resource_bytes(name)) for name in EXAMPLE_FILES)

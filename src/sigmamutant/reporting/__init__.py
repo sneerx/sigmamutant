@@ -4,15 +4,25 @@ from pathlib import Path
 from typing import Any
 
 from ._common import preflight_managed_paths, suite_input_paths
+from .gap_report import (
+    gap_payload,
+    render_gap_html,
+    render_gap_junit,
+    write_gap_reports,
+)
 from .html_report import render_html, write_html
 from .json_report import write_json
 from .junit_report import render_junit, write_junit
 from .survivors import preflight_survivor_output, write_survivors
 
 __all__ = [
+    "gap_payload",
+    "render_gap_html",
+    "render_gap_junit",
     "render_html",
     "render_junit",
     "write_all",
+    "write_gap_reports",
     "write_html",
     "write_json",
     "write_junit",

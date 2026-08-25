@@ -1,0 +1,4 @@
+version: 1
+rule: rules/powershell_encoded_hardened.yml
+fixtures: fixtures/gap.jsonl
+fail_under: 0.80

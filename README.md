@@ -1,6 +1,6 @@
 # SigmaMutant
 
-**Mutation testing for Sigma detection rules.**
+**Mutation testing and deterministic event-gap discovery for Sigma rules.**
 
 [![CI](https://github.com/sneerx/sigmamutant/actions/workflows/ci.yml/badge.svg)](https://github.com/sneerx/sigmamutant/actions/workflows/ci.yml)
 
@@ -9,27 +9,42 @@ mutated rules against your labelled event fixtures. If a fixture notices the
 change, the mutant is *killed*. If every fixture still passes, the mutant
 *survives* and points to a test gap or a possibly equivalent rule.
 
+It can also work in the other direction. `sigmamutant gap` keeps the rule
+fixed, derives bounded in-memory variations from labelled positive events, and
+checks whether the configured evaluator still matches them. A match loss is a
+*gap candidate* for human review, not proof of a real-world bypass.
+
 The question is simple:
 
 > We test detections. Who tests the detection tests?
 
 SigmaMutant's core is an offline blue-team quality tool. It does not execute
-command lines from events, contact a SIEM, generate payloads, or mutate
-telemetry. Version 1.0 includes an optional AI assistant for proposing
-synthetic fixtures. Its default Ollama provider stays on loopback; an OpenAI
-cloud provider remains explicitly opt-in. Local Azuma evaluation is the
-differential gate for both.
+command lines from events, contact a SIEM, or generate payloads. Rule mutants
+and event variations exist only as isolated copies; the input rule, suite, and
+fixture files are not modified. Version 1.0 also includes an optional AI
+assistant for proposing synthetic fixtures. Its default Ollama provider stays
+on loopback; an OpenAI cloud provider remains explicitly opt-in. Local Azuma
+evaluation remains the decision boundary.
+
+The two deterministic modes answer different questions:
+
+| Mode | In-memory change | Question |
+| --- | --- | --- |
+| `run` / `check` | Sigma rule copy | Would the labelled fixtures notice an atomic rule regression? |
+| `gap` | Positive event copy | Does this rule retain a match across the shipped, bounded representation hypotheses? |
 
 ## Status
 
-Version `1.0.0` keeps the intentionally narrow mutation-testing core and adds a
-reviewable repository workflow:
+The current main branch keeps the intentionally narrow mutation-testing core
+and adds a reviewable repository workflow:
 
 - one non-correlation Sigma rule per suite;
 - JSONL fixtures labelled with the expected match result;
 - six first-order mutation operators;
+- four deterministic, inert event-variation operators for gap discovery;
 - validation without mutant generation or report writes;
-- single-suite runs and repository-wide `check` aggregation;
+- single-suite mutation runs, event-gap runs, and repository-wide `check`
+  aggregation;
 - deterministic mutant IDs and reports;
 - offline environment diagnostics and a wheel-contained example bootstrap;
 - terminal, JSON, HTML, JUnit, YAML, and diff output;
@@ -45,11 +60,13 @@ suggestion command never edits fixture input. A separate `apply-fixture`
 command re-proves evidence against current inputs, previews the score change by
 default, and writes only with explicit `--write`.
 
-The supported subset is documented in
+The supported subset and the narrower claim boundary for event variations are
+documented in
 [Limitations and safety](docs/limitations.md). The Sigma `re` modifier is
 deliberately unsupported and fails closed before event evaluation to avoid
 ReDoS exposure from untrusted regular expressions. SigmaMutant is not a formal
-proof of rule correctness, and a survivor is not automatically a vulnerability.
+proof of rule correctness: neither a survivor nor a gap candidate is
+automatically a vulnerability.
 
 ## Install
 
@@ -103,8 +120,8 @@ sigmamutant doctor
 import the command at all, run `python -m pip check` and reinstall the wheel;
 a command cannot self-diagnose a missing CLI framework dependency.
 
-For a wheel-only installation, create a runnable weak/strong project without a
-source checkout:
+For a wheel-only installation, create runnable rule-mutation and event-gap
+examples without a source checkout:
 
 ```bash
 sigmamutant init-example my-sigmamutant-example
@@ -161,11 +178,12 @@ cross-platform Python command (macOS, Linux, or Windows PowerShell):
 python scripts/run_demo.py
 ```
 
-It treats the weak suite's intentional exit `1` as evidence rather than a tool
-error, proves the strong suite and a strong-only CI gate, verifies repository
-aggregation and the checked-in 15-domain evaluation, then lists every important
-artifact. Add `--verbose` for value-free mutation progress, `--quick` for only
-the weak/strong comparison, or `--no-color` for plain CI logs.
+It treats the weak rule-mutation and ordinary event-gap exit `1` results as
+evidence rather than tool errors, proves both strong paths and a strong-only CI
+gate, verifies repository aggregation and the checked-in 15-domain evaluation,
+then lists every important artifact. Add `--verbose` for value-free progress,
+`--quick` for only the two weak/strong comparisons, or `--no-color` for plain
+CI logs.
 
 Validate the example suite:
 
@@ -201,7 +219,32 @@ List the operators shipped in this build:
 
 ```bash
 sigmamutant operators
+sigmamutant gap-operators
 ```
+
+Now keep the events fixed and compare the ordinary example rule with a
+deliberately hardened example rule:
+
+```bash
+sigmamutant gap examples/powershell-gap.yml \
+  --out artifacts/powershell-gap --verbose
+
+sigmamutant gap examples/powershell-hardened-gap.yml \
+  --out artifacts/powershell-hardened-gap --verbose
+```
+
+The first command intentionally exits `1`: the rule retains `8` of `12`
+deterministic variations (`66.7%`) and leaves four evaluator-scoped gap
+candidates. The hardened example retains all `12` (`100.0%`) and exits `0`.
+Both use the same ten labelled fixtures and the separate `gap` default
+threshold of `1.0`; neither command edits those fixtures or either rule.
+
+One bounded operator replaces `pwsh.exe`'s `-EncodedCommand` token with `-e`
+or `-ec`. Those aliases are documented by Microsoft's
+[`about_Pwsh`](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_pwsh?view=powershell-7.6)
+reference. The example proves only how the pinned local evaluator handles the
+project-authored events and rules. It does not establish that every derived
+event is emitted by real telemetry or represents a production evasion.
 
 ## Reproducible evaluation
 
@@ -231,6 +274,9 @@ deterministic mutation sites. This measures rule-subset and operator reach—not
 fixture quality or detection accuracy. See the
 [method and results](docs/sigmahq-compatibility.md) and
 [`benchmarks/sigmahq-compatibility.json`](benchmarks/sigmahq-compatibility.json).
+Neither study is an event-gap benchmark. The `8/12` and `12/12` PowerShell
+comparison above is a narrow executable example, not a production robustness
+evaluation.
 
 ## Suite and fixture format
 
@@ -253,9 +299,11 @@ Fixtures are newline-delimited JSON. Every row needs a unique `id`, an
 ```
 
 A suite must contain at least one positive and one negative fixture. Before
-creating mutants, SigmaMutant runs the original rule against every fixture.
-Mutation testing stops if this baseline does not match all declared
-expectations.
+creating rule mutants or event variations, SigmaMutant runs the original rule
+against every fixture. Both workflows stop if this baseline does not match all
+declared expectations. `gap` then uses only the positive rows as seeds; the
+negative rows remain baseline guards. Positive seed event bodies must also be
+unique so copying one fixture under another ID cannot reweight the score.
 
 ## CLI
 
@@ -264,24 +312,41 @@ sigmamutant doctor
 sigmamutant init-example DEST
 sigmamutant validate SUITE
 sigmamutant run SUITE [--out DIRECTORY] [--fail-under SCORE] [--verbose]
+sigmamutant gap SUITE [--out DIRECTORY] [--fail-under SCORE] \
+  [--max-variations COUNT] [--verbose]
 sigmamutant check TARGET [--out DIRECTORY] [--recursive] [--verbose]
 sigmamutant suggest-fixture SUITE --mutant ID [--provider PROVIDER] \
   [--model MODEL] [--candidates COUNT] [--out FILE] [--allow-cloud] [--verbose]
 sigmamutant export-fixture EVIDENCE --candidate ID --out FILE [--id FIXTURE_ID] [--force]
 sigmamutant apply-fixture SUITE EVIDENCE --candidate ID [--id FIXTURE_ID] [--write]
 sigmamutant operators
+sigmamutant gap-operators
 ```
 
-`--fail-under` overrides the suite threshold for that run. Scores are decimal
-values from `0.0` to `1.0`.
+For `run`, `--fail-under` overrides the suite's mutation-score threshold. For
+`gap`, it sets a separate event-variation score threshold and defaults to
+`1.0`; `gap` does not reuse the suite's `fail_under` value. Both scores are
+decimal values from `0.0` to `1.0`, but they measure different things and
+should not be compared as one quality percentage.
+
+`gap` also defaults to a hard ceiling of `4096` generated variations. Use
+`--max-variations` to choose a different positive integer deliberately; if the
+ceiling would be exceeded, the run fails closed with exit `2` instead of
+truncating or silently changing the score.
 
 Without `--out`, each suite receives its own `artifacts/<suite-stem>/`
-directory so sequential runs do not overwrite another suite's evidence.
+directory for `run`. `gap` defaults to
+`artifacts/<suite-stem>-gaps/`, keeping its evidence separate.
 `run --verbose` (or `-v`) prints value-free baseline, mutant, fixture-result,
 and artifact stages; fixture event bodies are never included. The final
 terminal summary always states `RESULT: PASS`, `RESULT: FAIL`, or
 `RESULT: ERROR`, and lists surviving mutant IDs with the first deterministic
 diff to review plus a clearly labelled optional AI command.
+
+`gap --verbose` likewise omits fixture event bodies and derived values. It
+prints seed IDs, stable variation IDs, operator names, event paths, Boolean
+outcomes, and artifact stages. The terminal calls non-matching variations gap
+candidates and explicitly scopes them to the configured evaluator.
 
 `check` accepts one suite or discovers explicitly named `*-suite.yml`,
 `*-suite.yaml`, `*.suite.yml`, and `*.suite.yaml` files in a directory. Add
@@ -293,13 +358,20 @@ Exit codes are stable for CI:
 
 | Code | Meaning |
 | ---: | --- |
-| `0` | Validation passed, or the mutation score met the threshold |
-| `1` | The run completed, but the score was below the threshold |
+| `0` | Validation passed, or the selected score met its threshold |
+| `1` | A mutation or event-gap run completed below its threshold |
 | `2` | Input, baseline, unsupported-rule, or evaluator error |
 
 For `check`, exit `0` means every suite met its gate, exit `1` means at least
 one completed suite was below threshold, and exit `2` means at least one suite
 had a technical error.
+
+For `gap`, exit `0` means the event-variation score met `gap`'s threshold,
+exit `1` means analysis completed below it, and exit `2` covers invalid input,
+a baseline mismatch, no applicable safe variations, an evaluator exclusion,
+the configured variation ceiling, or an artifact failure. Negative fixtures
+are baseline guards; only labelled positive fixtures with unique event bodies
+become variation seeds.
 
 For `suggest-fixture`, exit `0` means at least one Azuma-scoped differential
 witness was produced, `1` means every proposal was rejected by the local gate,
@@ -391,6 +463,34 @@ preview. Human review remains the commit boundary.
 Read [AI Fixture Assistant](docs/ai-fixture-assistant.md) before enabling
 either provider, especially if rule logic is sensitive.
 
+## Event-gap operators
+
+`sigmamutant gap` starts with the same baseline contract as `run`: every
+positive and negative fixture must produce its declared result. It then creates
+first-order variations from positive fixtures only and evaluates each copy
+against the unchanged rule.
+
+| Operator | Bounded in-memory variation |
+| --- | --- |
+| `ascii_case` | Swap ASCII letter case in one rule-referenced `Image` or `ParentImage` field whose value-sensitive string predicate is not `cased` |
+| `command_line_whitespace` | Normalize or expand separators between existing, quote-aware `CommandLine` tokens without changing token or payload bytes |
+| `telemetry_path_to_basename` | Collapse a referenced `Image` or `ParentImage` path to its unchanged final basename |
+| `pwsh_encoded_alias` | For a conservatively shaped `pwsh.exe` command with a final lexical Base64 token, replace one documented `-EncodedCommand`, `-e`, or `-ec` alias while preserving every other byte |
+
+The event-variation score is:
+
+```text
+                         variations still matched
+variant score = ------------------------------------------------
+                 variations still matched + gap candidates
+```
+
+An evaluator exception is excluded from the denominator and makes the run exit
+`2`; it cannot increase the score. A score of `100%` means only that the rule
+retained every generated variation under the pinned evaluator and current
+operator set. The operators do not establish semantic equivalence, production
+telemetry availability, backend behavior, or a real-world false-negative rate.
+
 ## Mutation operators
 
 Each mutant contains exactly one atomic change.
@@ -452,6 +552,27 @@ artifacts/
     └── survivors/
 ```
 
+`sigmamutant gap` writes a separate, value-safe bundle:
+
+```text
+artifacts/<suite-stem>-gaps/
+├── gap-report.json
+├── gap-report.html
+└── gap-junit.xml
+```
+
+These reports contain fixture IDs, stable variation IDs, operator and field
+provenance, match status, claim-scope text, hashes of the source/replacement
+values and complete derived event, input hashes, and dependency versions. They
+deliberately omit raw fixture-derived source values, replacement values, and
+event bodies. Fixture IDs and the rule title can still contain sensitive names,
+so review the bundle before publishing it.
+
+For identical input bytes and dependencies, the gap reports are deterministic
+and contain no wall-clock timestamp. An `escaped` status in machine evidence is
+rendered as a gap candidate in the CLI: it means only that the configured local
+evaluator changed from match to no-match for that bounded variation.
+
 ## Interpreting a survivor
 
 A survivor means only that the current fixture set did not distinguish that
@@ -467,9 +588,29 @@ Do not describe every survivor as a bypass, exploit, or security vulnerability.
 Mutation testing measures the sensitivity of the fixture suite within the
 supported evaluator semantics.
 
+## Interpreting a gap candidate
+
+A gap candidate means that a labelled positive seed matched the original rule
+but one shipped, deterministic event variation did not. Review it in this
+order:
+
+1. Read the operator, changed event path, claim scope, and hashes in the gap
+   report.
+2. Decide whether that representation can actually be emitted by the relevant
+   sensor and ingestion path.
+3. Confirm the behavior in the target backend; the local evaluator is not a
+   SIEM integration test.
+4. If the distinction is meaningful, change the rule manually and add reviewed
+   positive and negative fixtures before running both `gap` and `run` again.
+
+Do not publish a candidate as an evasion, bypass, product weakness, or
+production false negative. SigmaMutant intentionally does not repair the Sigma
+YAML or turn a derived event into executable activity.
+
 ## Design
 
-SigmaMutant separates parsing, mutation, evaluation, and reporting:
+SigmaMutant separates parsing, mutation, evaluation, and reporting. After one
+shared baseline, the two deterministic lanes move in opposite directions:
 
 ```text
 suite + rule + fixtures
@@ -477,14 +618,17 @@ suite + rule + fixtures
           v
  baseline validation
           |
-          v
-  atomic detection-tree mutants
-          |
-          v
- event evaluation and classification
-          |
-          v
- terminal + JSON + HTML + JUnit + diffs
+          +-------------------------------+
+          |                               |
+          v                               v
+ atomic rule-copy mutants       positive event-copy variations
+          |                               |
+          v                               v
+ killed / survived                 detected / gap candidate
+          |                               |
+          +---------------+---------------+
+                          v
+             terminal + deterministic reports
 ```
 
 See [Architecture](docs/architecture.md) for component boundaries and
@@ -496,11 +640,13 @@ SigmaMutant is designed for defensive engineering:
 
 - use synthetic, anonymized, or appropriately handled event fixtures;
 - review survivor diffs as test-design evidence;
+- review gap candidates as evaluator-scoped representation hypotheses;
 - do not publish real environment details embedded in fixtures;
 - do not use the output to claim an unverified evasion or product weakness.
 
-The tool never executes strings contained in events. Core commands require no
-network access. `suggest-fixture` never changes fixture input, and
+The tool never executes strings contained in events. `gap` creates bounded
+event copies in memory but never rewrites the input JSONL. Core commands
+require no network access. `suggest-fixture` never changes fixture input, and
 `apply-fixture` is a no-write preview unless `--write` is supplied after local
 reproof. The optional assistant uses either loopback-only Ollama or the
 explicitly authorized OpenAI cloud path. More detail is in
@@ -508,16 +654,21 @@ explicitly authorized OpenAI cloud path. More detail is in
 
 ## Prior art and positioning
 
-SigmaMutant is not a telemetry obfuscator, Sigma rule generator, or ML
+SigmaMutant is not a general telemetry obfuscator, Sigma rule generator, or ML
 evasion detector. Projects such as Ordeal, SPECTRA, AMIDES, SigmaOptimizer,
 Atomic Red Team, and Sigma evaluation tools address adjacent problems.
-SigmaMutant's narrow contribution is a test-of-tests workflow:
+SigmaMutant's narrow contribution is a two-axis, deterministic review workflow:
 
 ```text
 Sigma rule + labelled fixtures
           -> atomic rule mutants
           -> killed/survived evidence
           -> mutation score for CI
+
+Sigma rule + labelled positive seeds
+          -> bounded inert event variations
+          -> detected/gap-candidate evidence
+          -> separate event-variation score
 ```
 
 See [Prior art](docs/prior-art.md) for a transparent comparison and citations.

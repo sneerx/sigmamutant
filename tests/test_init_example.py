@@ -7,6 +7,7 @@ from typer.testing import CliRunner
 
 from sigmamutant.cli import app
 from sigmamutant.example_project import EXAMPLE_FILES
+from sigmamutant.gap_runner import run_gap_analysis
 from sigmamutant.runner import run_suite, validate_suite
 
 runner = CliRunner()
@@ -21,6 +22,9 @@ def test_init_example_creates_canonical_runnable_project(tmp_path: Path) -> None
     assert result.exit_code == 0, result.output
     assert "Created self-contained example" in result.output
     assert "weak run intentionally exits 1" in result.output
+    assert "sigmamutant gap" in result.output
+    assert "powershell-gap.yml" in result.output
+    assert "powershell-hardened-gap.yml" in result.output
     assert "OPENAI_API_KEY" not in result.output
     assert sorted(
         path.relative_to(destination).as_posix()
@@ -34,10 +38,16 @@ def test_init_example_creates_canonical_runnable_project(tmp_path: Path) -> None
 
     weak = destination / "weak-suite.yml"
     strong = destination / "strong-suite.yml"
+    weak_gap = destination / "powershell-gap.yml"
+    hardened_gap = destination / "powershell-hardened-gap.yml"
     assert validate_suite(weak).passed is True
     assert validate_suite(strong).passed is True
+    assert validate_suite(weak_gap).passed is True
+    assert validate_suite(hardened_gap).passed is True
     assert run_suite(weak).passed is False
     assert run_suite(strong).passed is True
+    assert run_gap_analysis(weak_gap).passed is False
+    assert run_gap_analysis(hardened_gap).passed is True
 
 
 @pytest.mark.parametrize("kind", ("directory", "file"))

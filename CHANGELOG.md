@@ -6,16 +6,35 @@ All notable changes to SigmaMutant are documented here. The format follows
 
 ## [Unreleased]
 
-## [1.0.0] - 2026-08-24
+## [1.0.0] - 2026-08-25
 
 ### Added
 
+- Deterministic `gap` analysis that baseline-validates one existing suite,
+  derives bounded in-memory variations from labelled positive events, evaluates
+  them against the unchanged rule, and applies a separate event-variation score
+  and threshold with stable `0`/`1`/`2` exit semantics.
+- Four fixed event operators for value-sensitive process-path ASCII case,
+  quote-aware command-line separator shape, referenced `Image`/`ParentImage`
+  basename shape, and conservatively gated documented `pwsh.exe`
+  `-EncodedCommand` / `-e` / `-ec` aliases, plus a `gap-operators` discovery
+  command.
+- Timestamp-free, value-safe `gap-report.json`, `gap-report.html`, and
+  `gap-junit.xml` evidence with stable variation IDs, source fixture and field
+  provenance, claim-scope text, value/event hashes, input hashes, and dependency
+  versions.
+- A synthetic PowerShell event-gap example that reproducibly compares one
+  labelled corpus against an ordinary rule (`8/12`, `66.7%`) and a deliberately
+  hardened rule (`12/12`, `100.0%`).
+- Duplicate-positive-seed rejection and a configurable, fail-closed variation
+  ceiling (`4096` by default) so copied fixtures or partial enumeration cannot
+  silently reweight a gap score.
 - An offline, secret-safe `doctor` command that verifies the supported Python
   runtime and core dependency versions while reporting optional OpenAI/Ollama
   readiness without network probes or credential values.
-- A wheel-contained `init-example` command that creates a deterministic,
-  self-contained weak/strong project without network access or overwriting an
-  existing destination.
+- A wheel-contained `init-example` command that creates deterministic,
+  self-contained weak/strong rule-mutation and event-gap examples without
+  network access or overwriting an existing destination.
 - Repository-wide `check` command with explicit suite-name discovery, optional
   recursive traversal, isolated per-suite artifacts, aggregate JSON/HTML/JUnit
   evidence, and stable `0`/`1`/`2` CI exit semantics.
@@ -45,10 +64,14 @@ All notable changes to SigmaMutant are documented here. The format follows
   recursive discovery, value-free progress, and aggregate evidence paths.
 - A credential-isolated, fully offline `scripts/run_demo.py` example runner
   that understands intentional quality-gate exits, checks every artifact, and
-  closes with a passing strong-only CI gate.
+  closes both deterministic weak-to-strong comparisons.
 
 ### Changed
 
+- Expanded the public product contract from rule-only mutation testing to two
+  explicitly separate deterministic axes: rule mutation tests fixture quality,
+  while event variation stress-tests the unchanged rule within a narrow
+  evaluator scope.
 - Namespaced the default `run` output beneath `artifacts/<suite-stem>/`, added
   explicit terminal `PASS`/`FAIL`/`ERROR` status, and printed survivor IDs with
   a review-oriented next command.
@@ -59,6 +82,12 @@ All notable changes to SigmaMutant are documented here. The format follows
 
 ### Security
 
+- Kept event variations inert and in memory: `gap` never executes event strings,
+  decodes or creates payloads, calls a provider, or modifies rule, suite, or
+  fixture inputs.
+- Omitted raw fixture-derived source values, replacement values, and complete
+  event bodies from gap terminal output and report bundles; evaluator exclusions
+  and zero-applicability runs fail closed instead of increasing the score.
 - Restricted suite child paths to relative files inside the suite directory,
   rejecting absolute paths, parent traversal, and symlink escapes.
 - Rejected the Sigma `re` modifier before baseline event matching or mutation

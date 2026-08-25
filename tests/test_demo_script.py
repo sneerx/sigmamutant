@@ -40,11 +40,15 @@ def test_offline_environment_does_not_copy_api_credentials(
 def test_quick_plan_treats_weak_exit_one_as_expected(tmp_path: Path) -> None:
     steps = run_demo._build_steps(tmp_path, verbose=True, quick=True)
 
-    assert len(steps) == 2
-    assert steps[0].expected_exit == 1
-    assert steps[0].expected_quality_failure is True
-    assert steps[1].expected_exit == 0
-    assert steps[1].expected_quality_failure is False
+    assert [step.expected_exit for step in steps] == [1, 0, 1, 0]
+    assert [step.expected_quality_failure for step in steps] == [
+        True,
+        False,
+        True,
+        False,
+    ]
+    assert "powershell-gap.yml" in steps[2].command[4]
+    assert "powershell-hardened-gap.yml" in steps[3].command[4]
     assert all("--verbose" in step.command for step in steps)
     assert all("suggest-fixture" not in step.command for step in steps)
 
@@ -54,10 +58,10 @@ def test_full_plan_includes_expected_repository_gate_and_evaluation(
 ) -> None:
     steps = run_demo._build_steps(tmp_path, verbose=False, quick=False)
 
-    assert [step.expected_exit for step in steps] == [1, 0, 1, 0, 0]
-    assert steps[2].expected_quality_failure is True
-    assert "strong-suite.yml" in steps[3].command[4]
-    assert steps[4].command[-1] == "--verify"
+    assert [step.expected_exit for step in steps] == [1, 0, 1, 0, 1, 0, 0]
+    assert steps[4].expected_quality_failure is True
+    assert "strong-suite.yml" in steps[5].command[4]
+    assert steps[6].command[-1] == "--verify"
 
 
 def test_main_fails_on_unexpected_exit_without_masking_it(
@@ -98,3 +102,5 @@ def test_quick_demo_runs_public_cli_and_writes_reports(tmp_path: Path) -> None:
     assert "credentials are not inherited" in completed.stdout
     assert (tmp_path / "demo" / "weak" / "report.json").is_file()
     assert (tmp_path / "demo" / "strong" / "report.json").is_file()
+    assert (tmp_path / "demo" / "weak-gap" / "gap-report.json").is_file()
+    assert (tmp_path / "demo" / "hardened-gap" / "gap-report.json").is_file()

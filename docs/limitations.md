@@ -29,7 +29,8 @@ The following constructs fail closed:
 - lists of maps with ambiguous event semantics;
 - backend-specific query behavior;
 - live SIEM searches;
-- telemetry mutation or command-line obfuscation;
+- arbitrary telemetry obfuscation, payload rewriting, payload decoding, or
+  user-supplied event-mutation code;
 - automatic rule repair;
 - combined higher-order mutations.
 
@@ -71,6 +72,60 @@ mean the rule detects every real technique or has no false positives.
 Different rules can expose different mutation points, so cross-rule score
 rankings need careful interpretation.
 
+## Event-gap score boundary
+
+`sigmamutant gap` creates bounded copies of labelled positive events in memory
+and evaluates them against the unchanged rule. Its event-variation score is
+conditional on:
+
+- the labelled positive seed events;
+- the four shipped event operators and their applicability checks;
+- the configured maximum-variation ceiling (default `4096`);
+- the original Sigma rule;
+- Azuma's local event semantics;
+- exact dependency versions.
+
+The operators cover ASCII case only in value-sensitive, non-`cased` `Image` or
+`ParentImage` predicates, quote-aware command-line separator shape,
+`Image`/`ParentImage` full-path versus basename shape, and three documented
+`pwsh.exe` encoded-command aliases behind a conservative token-shape gate.
+Microsoft documents
+`-EncodedCommand`, `-e`, and `-ec` in
+[`about_Pwsh`](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_pwsh?view=powershell-7.6).
+That source supports the alias relationship only. It does not prove that a
+particular sensor emits the generated event shape or that the local Sigma
+result matches a production backend.
+
+None of the event operators establishes universal semantic equivalence:
+
+- case can be meaningful in fields or environments outside the operator's
+  narrow applicability gate;
+- command-line parsing rules differ across programs and operating systems;
+- a collector may always emit a full path, always emit a basename, or use a
+  different field mapping;
+- documented `pwsh` aliases do not imply behavior for `powershell.exe` or an
+  arbitrary executable.
+
+A `100%` event-variation score therefore means only that every generated,
+scoreable variant retained its match under the configured evaluator. It does
+not mean the rule has no detection gaps, that production false negatives are
+zero, or that the rule is robust against arbitrary adversarial changes. The
+event-variation score and rule-mutation score measure different axes and must
+not be combined into one percentage.
+
+Each generated variation has equal weight. A seed or operator with more
+applicable points contributes more denominator entries, so changing the
+fixture mix can change the score. Exact duplicate positive event bodies are
+rejected, and generation fails closed rather than truncating when it would
+exceed the configured limit; neither control turns cross-rule scores into a
+universal ranking.
+
+An `escaped` variation is rendered as a **gap candidate**. It can indicate a
+meaningful representation boundary, impossible telemetry, an operator
+assumption that does not apply to the environment, a backend difference, or an
+evaluator limitation. It is not automatically an evasion, bypass, exploit,
+CVE, or vendor weakness.
+
 ## Survivor language
 
 A surviving mutant is one of:
@@ -94,9 +149,12 @@ Events are untrusted data. SigmaMutant:
 - never uses event values as shell arguments;
 - never executes a command represented by a fixture;
 - makes no network requests in `doctor`, `init-example`, `validate`, `run`,
-  `check`, `operators`, `export-fixture`, or `apply-fixture`;
-- keeps `run` and `check` writes beneath the selected artifact directory;
+  `gap`, `check`, `operators`, `gap-operators`, `export-fixture`, or
+  `apply-fixture`;
+- keeps `run`, `gap`, and `check` writes beneath the selected artifact
+  directory;
 - leaves the original rule unchanged;
+- creates `gap` event variations only as in-memory copies;
 - leaves fixture input unchanged unless `apply-fixture --write` is explicitly
   requested after a successful local preview and reproof.
 
@@ -106,8 +164,9 @@ string as inert event data and never changes fixture input. Pulling an Ollama
 model is a separate network and disk operation performed before local
 inference.
 
-Users should still review fixtures before publication because logs can contain
-hostnames, usernames, tokens, internal paths, or customer data.
+Users should still review fixtures and reports before publication because logs
+and fixture IDs can contain hostnames, usernames, tokens, internal paths, or
+customer data.
 
 ## AI assistant boundary
 
@@ -202,13 +261,16 @@ Appropriate uses include:
 
 - improving unit tests for a detection rule;
 - reviewing which selector decisions fixtures actually protect;
+- reviewing bounded representation sensitivities in labelled positive events;
 - establishing a CI quality gate;
 - teaching detection-as-code practices with synthetic logs;
 - producing reproducible evidence for rule review.
 
-The project does not include payload generation or telemetry-evasion
-functionality. Do not repurpose survivor evidence into unsupported claims about
-real environments.
+The project includes only the fixed, bounded, inert event variations documented
+above. It does not generate payloads, execute events, provide a general
+telemetry-obfuscation framework, or repair rules automatically. Do not
+repurpose survivor or gap evidence into unsupported claims about real
+environments.
 
 ## Data handling
 
@@ -226,6 +288,13 @@ diffs. Treat it as security engineering evidence, not as a harmless screenshot.
 AI suggestion evidence can contain rule-derived context and generated strings;
 apply the same controls even though existing fixture event bodies are not sent
 to the selected provider process.
+
+Gap JSON, HTML, and JUnit reports omit raw source values, replacement values,
+and complete event bodies. They retain fixture IDs, the rule title,
+operator/path descriptions, result Booleans, hashes, and dependency metadata.
+Hashes are correlators, not anonymization, and low-entropy values may be
+guessable. Keep gap artifacts under the same access controls as their source
+fixtures and review identifiers before sharing.
 
 Suite-configured rule and fixture paths must be relative, must not contain
 parent traversal, and must resolve inside the suite directory. This blocks
@@ -249,12 +318,12 @@ commands, options, and fields may be introduced, but removing or reinterpreting
 an existing integration surface requires either a new schema version or a new
 major SigmaMutant release.
 
-Mutation results may still change in a minor or patch release when an evaluator
-bug is corrected, a fail-closed validation gap is fixed, or explicitly new
-operators and supported semantics are added. Reproducible evidence therefore
-records the exact SigmaMutant and dependency versions. Third-party Python
-imports remain outside this compatibility promise; the CLI and serialized
-schemas are the supported integration boundary.
+Rule-mutation and event-gap results may still change in a minor or patch release
+when an evaluator bug is corrected, a fail-closed validation gap is fixed, or
+explicitly new operators and supported semantics are added. Reproducible
+evidence therefore records the exact SigmaMutant and dependency versions.
+Third-party Python imports remain outside this compatibility promise; the CLI
+and serialized schemas are the supported integration boundary.
 
 ## Operational limitations
 
@@ -267,6 +336,7 @@ It does not promise:
 - predictable local-model latency or resource use;
 - stable APIs for third-party Python imports;
 - automatic triage of equivalent mutants;
+- automatic triage of environment-specific gap candidates;
 - a hosted UI or multi-user service.
 
 The CLI, suite schema version, exit codes, and report schema are the intended

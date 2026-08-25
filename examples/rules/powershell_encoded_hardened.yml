@@ -1,0 +1,40 @@
+title: Encoded PowerShell Process from an Untrusted Parent (Hardened)
+id: 6b2c176e-6c48-4f19-9f81-27f92f5dc472
+status: experimental
+description: >-
+  Extends the synthetic encoded-command example with the documented pwsh
+  EncodedCommand aliases used by SigmaMutant's deterministic gap profile.
+author: SigmaMutant contributors
+date: 2026-08-25
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_windows_image_path:
+    Image|endswith:
+      - '\powershell.exe'
+  selection_windows_image_basename:
+    Image: 'powershell.exe'
+  selection_pwsh_image_path:
+    Image|endswith:
+      - '\pwsh.exe'
+  selection_pwsh_image_basename:
+    Image: 'pwsh.exe'
+  selection_common_cli:
+    CommandLine|contains:
+      - ' -EncodedCommand '
+      - ' -enc '
+  selection_pwsh_short_cli:
+    CommandLine|contains:
+      - ' -ec '
+      - ' -e '
+  filter_trusted_parent:
+    ParentImage|endswith: '\trusted-deployer.exe'
+  condition: >-
+    (((selection_windows_image_path or selection_windows_image_basename) and
+    selection_common_cli) or ((selection_pwsh_image_path or
+    selection_pwsh_image_basename) and (selection_common_cli or
+    selection_pwsh_short_cli))) and not filter_trusted_parent
+falsepositives:
+  - Approved administrative automation not using the trusted parent
+level: high

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import shlex
+import unicodedata
 from pathlib import Path
 from typing import Annotated
 
@@ -23,6 +24,7 @@ from sigmamutant.ai.service import (
 from sigmamutant.batch import BatchRunResult, check_suites
 from sigmamutant.doctor import collect_doctor_report
 from sigmamutant.errors import SigmaMutantError
+from sigmamutant.event_variations import DEFAULT_MAX_VARIATIONS, EVENT_OPERATORS
 from sigmamutant.example_project import EXAMPLE_FILES, initialize_example
 from sigmamutant.fixture_workflow import (
     PromotionPreview,
@@ -34,6 +36,7 @@ from sigmamutant.fixture_workflow import (
 from sigmamutant.fixture_workflow import (
     export_fixture as export_verified_fixture,
 )
+from sigmamutant.gap_runner import run_gap_analysis
 from sigmamutant.mutations import OPERATORS
 from sigmamutant.progress import RunProgress
 from sigmamutant.runner import run_suite, validate_suite
@@ -41,11 +44,23 @@ from sigmamutant.suite import load_suite
 
 app = typer.Typer(
     name="sigmamutant",
-    help="Measure how well labelled event fixtures detect mutations in a Sigma rule.",
+    help=(
+        "Stress-test Sigma rules and labelled event fixtures with deterministic "
+        "mutations."
+    ),
     no_args_is_help=True,
     add_completion=False,
 )
 console = Console()
+
+
+def _terminal_safe(value: object) -> str:
+    """Replace terminal control, bidi-format, and surrogate characters."""
+
+    return "".join(
+        "\ufffd" if unicodedata.category(character) in {"Cc", "Cf", "Cs"} else character
+        for character in str(value)
+    )
 
 
 def _display_path(path: Path) -> str:
@@ -55,16 +70,17 @@ def _display_path(path: Path) -> str:
     workspace = Path.cwd().resolve()
     try:
         relative = resolved.relative_to(workspace)
-        return relative.as_posix() if relative.parts else "."
+        displayed = relative.as_posix() if relative.parts else "."
+        return _terminal_safe(displayed)
     except ValueError:
         pass
 
     home = Path.home().resolve()
     try:
         relative_home = resolved.relative_to(home)
-        return (Path("~") / relative_home).as_posix()
+        return _terminal_safe((Path("~") / relative_home).as_posix())
     except ValueError:
-        return str(resolved)
+        return _terminal_safe(resolved)
 
 
 def _display_error(exc: Exception) -> str:
@@ -78,7 +94,7 @@ def _display_error(exc: Exception) -> str:
     for prefix, replacement in replacements:
         if prefix and prefix != "/":
             message = message.replace(prefix, replacement)
-    return message
+    return _terminal_safe(message)
 
 
 def _shell_path(path: Path) -> str:
@@ -95,6 +111,11 @@ def _shell_path(path: Path) -> str:
 def _default_output_dir(suite: Path) -> Path:
     stem = suite.stem.strip(" .") or "suite"
     return Path("artifacts") / stem
+
+
+def _default_gap_output_dir(suite: Path) -> Path:
+    stem = suite.stem.strip(" .") or "suite"
+    return Path("artifacts") / f"{stem}-gaps"
 
 
 def _version_callback(value: bool) -> None:
@@ -115,11 +136,11 @@ def main(
         ),
     ] = False,
 ) -> None:
-    """Mutation testing for Sigma detection contracts."""
+    """Two-sided robustness testing for Sigma detection contracts."""
 
 
 def _render_result(result, *, artifacts: Path | None = None) -> None:
-    table = Table(title=f"SigmaMutant — {escape(result.rule_title)}")
+    table = Table(title=f"SigmaMutant — {escape(_terminal_safe(result.rule_title))}")
     table.add_column("Metric")
     table.add_column("Value", justify="right")
     baseline = "[green]pass[/green]" if result.baseline_passed else "[red]fail[/red]"
@@ -132,7 +153,7 @@ def _render_result(result, *, artifacts: Path | None = None) -> None:
     table.add_row("Threshold", f"{result.threshold:.1%}")
     console.print(table)
     for error in result.errors:
-        console.print("[red]error:[/red] ", Text(error), sep="")
+        console.print("[red]error:[/red] ", Text(_terminal_safe(error)), sep="")
     if not result.baseline_passed or result.errors:
         console.print("[red]RESULT: ERROR[/red] — mutation run did not complete.")
     elif result.passed:
@@ -149,7 +170,9 @@ def _render_result(result, *, artifacts: Path | None = None) -> None:
 
 
 def _render_validation(result) -> None:
-    table = Table(title=f"SigmaMutant validation — {escape(result.rule_title)}")
+    table = Table(
+        title=f"SigmaMutant validation — {escape(_terminal_safe(result.rule_title))}"
+    )
     table.add_column("Check")
     table.add_column("Result", justify="right")
     supported = "[green]pass[/green]" if result.rule_supported else "[red]fail[/red]"
@@ -159,7 +182,7 @@ def _render_validation(result) -> None:
     table.add_row("Fixtures", str(result.fixture_count))
     console.print(table)
     for error in result.errors:
-        console.print("[red]error:[/red] ", Text(error), sep="")
+        console.print("[red]error:[/red] ", Text(_terminal_safe(error)), sep="")
     if result.passed:
         console.print("[green]RESULT: PASS[/green] — suite and baseline are valid.")
     else:
@@ -204,6 +227,77 @@ def _render_survivors(result, *, suite: Path, artifacts: Path) -> None:
 
 
 def _exit_code(result) -> int:
+    if not result.baseline_passed or result.errors:
+        return 2
+    return 0 if result.passed else 1
+
+
+def _render_gap_result(result, *, artifacts: Path) -> None:
+    table = Table(
+        title=f"SigmaMutant gaps — {escape(_terminal_safe(result.rule_title))}"
+    )
+    table.add_column("Metric")
+    table.add_column("Value", justify="right")
+    baseline = "[green]pass[/green]" if result.baseline_passed else "[red]fail[/red]"
+    table.add_row("Baseline", baseline)
+    table.add_row("Positive seeds", str(result.seed_count))
+    table.add_row("Variants", str(result.variation_count))
+    table.add_row("Detected", str(result.detected))
+    table.add_row("Gap candidates", str(result.escaped))
+    table.add_row("Excluded", str(result.excluded))
+    table.add_row("Variant score", f"{result.score:.1%}")
+    table.add_row("Threshold", f"{result.threshold:.1%}")
+    console.print(table)
+    for error in result.errors:
+        console.print("[red]error:[/red] ", Text(_terminal_safe(error)), sep="")
+    if not result.baseline_passed or result.errors:
+        console.print("[red]RESULT: ERROR[/red] — gap analysis did not complete.")
+    elif result.passed:
+        console.print(
+            f"[green]RESULT: PASS[/green] — {result.score:.1%} >= "
+            f"{result.threshold:.1%}"
+        )
+    else:
+        console.print(
+            f"[red]RESULT: FAIL[/red] — {result.score:.1%} < {result.threshold:.1%}"
+        )
+    console.print("Artifacts: ", Text(_display_path(artifacts)), sep="")
+
+
+def _render_gap_candidates(result) -> None:
+    candidates = sorted(
+        (item for item in result.variation_results if item.status == "escaped"),
+        key=lambda item: item.variation.id,
+    )
+    if not candidates:
+        return
+    limit = 10
+    table = Table(title=f"Gap candidates requiring review — {len(candidates)}")
+    table.add_column("Variation ID")
+    table.add_column("Seed fixture")
+    table.add_column("Operator")
+    table.add_column("Event path")
+    for item in candidates[:limit]:
+        variation = item.variation
+        table.add_row(
+            escape(_terminal_safe(variation.id)),
+            escape(_terminal_safe(variation.source_fixture_id)),
+            escape(_terminal_safe(variation.operator)),
+            escape(_terminal_safe(variation.path)),
+        )
+    console.print(table)
+    if len(candidates) > limit:
+        console.print(
+            f"[yellow]Showing {limit} of {len(candidates)} candidates; "
+            "the report contains the complete value-safe list.[/yellow]"
+        )
+    console.print(
+        "[yellow]Interpretation:[/yellow] deterministic match-loss hypotheses "
+        "for review; not proof of a real-world evasion."
+    )
+
+
+def _gap_exit_code(result) -> int:
     if not result.baseline_passed or result.errors:
         return 2
     return 0 if result.passed else 1
@@ -269,7 +363,7 @@ def _render_suggestions(result, *, artifact: Path) -> None:
 def _render_suggestion_progress(event: SuggestionProgress) -> None:
     details = json.dumps(
         dict(event.details),
-        ensure_ascii=False,
+        ensure_ascii=True,
         sort_keys=True,
         separators=(",", ":"),
         default=str,
@@ -286,7 +380,7 @@ def _render_suggestion_progress(event: SuggestionProgress) -> None:
 def _render_run_progress(event: RunProgress) -> None:
     details = json.dumps(
         dict(event.details),
-        ensure_ascii=False,
+        ensure_ascii=True,
         sort_keys=True,
         separators=(",", ":"),
         default=str,
@@ -304,7 +398,9 @@ def _render_run_progress(event: RunProgress) -> None:
 def init_example_command(
     destination: Annotated[
         Path,
-        typer.Argument(help="New directory for a self-contained weak/strong example."),
+        typer.Argument(
+            help="New directory for self-contained rule-mutation and event-gap examples."
+        ),
     ],
 ) -> None:
     """Create an offline example project from files bundled in this installation."""
@@ -317,13 +413,15 @@ def init_example_command(
 
     weak_suite = root / "weak-suite.yml"
     strong_suite = root / "strong-suite.yml"
+    weak_gap_suite = root / "powershell-gap.yml"
+    hardened_gap_suite = root / "powershell-hardened-gap.yml"
     console.print(
         "[green]Created self-contained example:[/green] ",
         Text(_display_path(root)),
         sep="",
     )
     console.print(f"Files: {len(EXAMPLE_FILES)} (synthetic, offline, no secrets)")
-    console.print("Next (the weak run intentionally exits 1):")
+    console.print("Next (the weak run intentionally exits 1 on both axes):")
     console.print(
         "  ",
         Text(
@@ -337,6 +435,22 @@ def init_example_command(
         Text(
             f"sigmamutant run {_shell_path(strong_suite)} "
             "--out artifacts/sigmamutant-strong"
+        ),
+        sep="",
+    )
+    console.print(
+        "  ",
+        Text(
+            f"sigmamutant gap {_shell_path(weak_gap_suite)} "
+            "--out artifacts/sigmamutant-weak-gap"
+        ),
+        sep="",
+    )
+    console.print(
+        "  ",
+        Text(
+            f"sigmamutant gap {_shell_path(hardened_gap_suite)} "
+            "--out artifacts/sigmamutant-hardened-gap"
         ),
         sep="",
     )
@@ -487,6 +601,66 @@ def run(
     _render_result(result, artifacts=artifact_dir)
     _render_survivors(result, suite=suite, artifacts=artifact_dir)
     code = _exit_code(result)
+    if code:
+        raise typer.Exit(code=code)
+
+
+@app.command()
+def gap(
+    suite: Annotated[Path, typer.Argument(help="Path to suite.yml")],
+    out: Annotated[
+        Path | None,
+        typer.Option(
+            "--out",
+            "-o",
+            help="Gap artifact directory; defaults to artifacts/<suite-stem>-gaps.",
+            show_default=False,
+        ),
+    ] = None,
+    fail_under: Annotated[
+        float,
+        typer.Option(
+            "--fail-under",
+            min=0.0,
+            max=1.0,
+            help="Required event-variation detection score.",
+        ),
+    ] = 1.0,
+    max_variations: Annotated[
+        int,
+        typer.Option(
+            "--max-variations",
+            min=1,
+            help="Maximum generated event variations before failing closed.",
+        ),
+    ] = DEFAULT_MAX_VARIATIONS,
+    verbose: Annotated[
+        bool,
+        typer.Option(
+            "--verbose",
+            "-v",
+            help="Show value-free seed, operator, result, and artifact progress.",
+        ),
+    ] = False,
+) -> None:
+    """Find evaluator-scoped match-loss candidates using inert event variations."""
+
+    artifact_dir = out if out is not None else _default_gap_output_dir(suite)
+    try:
+        result = run_gap_analysis(
+            suite,
+            output_dir=artifact_dir,
+            fail_under=fail_under,
+            max_variations=max_variations,
+            progress=_render_run_progress if verbose else None,
+        )
+    except (SigmaMutantError, OSError, ValueError) as exc:
+        console.print("[red]error:[/red] ", Text(_display_error(exc)), sep="")
+        console.print("[red]RESULT: ERROR[/red] — gap analysis did not complete.")
+        raise typer.Exit(code=2) from exc
+    _render_gap_result(result, artifacts=artifact_dir)
+    _render_gap_candidates(result)
+    code = _gap_exit_code(result)
     if code:
         raise typer.Exit(code=code)
 
@@ -729,6 +903,18 @@ def operators() -> None:
     table.add_column("Operator")
     table.add_column("Mutation")
     for operator in OPERATORS:
+        table.add_row(operator.name, operator.description)
+    console.print(table)
+
+
+@app.command("gap-operators")
+def gap_operators() -> None:
+    """List the inert event-variation operators included in this build."""
+
+    table = Table(title="SigmaMutant gap operators")
+    table.add_column("Operator")
+    table.add_column("Variation")
+    for operator in EVENT_OPERATORS:
         table.add_row(operator.name, operator.description)
     console.print(table)
 

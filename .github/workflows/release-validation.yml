@@ -99,6 +99,20 @@ jobs:
           "${RUNNER_TEMP}/sigmamutant-release-smoke/bin/sigmamutant" run \
             "${RUNNER_TEMP}/sigmamutant-example/strong-suite.yml" \
             --out "${RUNNER_TEMP}/sigmamutant-release-report"
+          if "${RUNNER_TEMP}/sigmamutant-release-smoke/bin/sigmamutant" gap \
+            "${RUNNER_TEMP}/sigmamutant-example/powershell-gap.yml" \
+            --out "${RUNNER_TEMP}/sigmamutant-release-gap-weak"; then
+            echo "error: weak gap example unexpectedly passed"
+            exit 1
+          else
+            weak_gap_exit=$?
+          fi
+          test "${weak_gap_exit}" -eq 1
+          "${RUNNER_TEMP}/sigmamutant-release-smoke/bin/sigmamutant" gap \
+            "${RUNNER_TEMP}/sigmamutant-example/powershell-hardened-gap.yml" \
+            --out "${RUNNER_TEMP}/sigmamutant-release-gap-hardened"
+          test -s "${RUNNER_TEMP}/sigmamutant-release-gap-weak/gap-report.json"
+          test -s "${RUNNER_TEMP}/sigmamutant-release-gap-hardened/gap-report.json"
 
       - name: Generate checksums
         shell: bash

@@ -1,8 +1,8 @@
 # Prior Art and Distinction
 
-SigmaMutant sits between Sigma evaluation, detection regression testing, and
-software mutation testing. This page states the relationship directly so the
-project's novelty is not overstated.
+SigmaMutant sits between Sigma evaluation, detection regression testing,
+software mutation testing, and bounded event-robustness probing. This page
+states the relationship directly so the project's novelty is not overstated.
 
 ## The specific workflow
 
@@ -12,12 +12,19 @@ SigmaMutant takes:
 one Sigma rule + labelled positive/negative event fixtures
 ```
 
-It then mutates the rule's parsed detection logic one atomic defect at a time,
-runs the existing fixtures, and reports killed and surviving mutants with a
-mutation score and survivor diffs.
+It exposes two independent deterministic lanes after one baseline check:
 
-The primary object being assessed is the **test suite's sensitivity to rule
-defects**.
+```text
+rule mutation: fixture corpus held constant -> atomic rule-copy defects
+event gap:     rule held constant           -> bounded positive-event copies
+```
+
+Rule mutation reports killed and surviving mutants, a mutation score, and
+survivor diffs. Event-gap analysis reports detected variations and gap
+candidates with a separate event-variation score and value-safe evidence.
+The primary objects being assessed are the **test suite's sensitivity to rule
+defects** and, separately, the **rule's evaluator-scoped match retention across
+the shipped representation hypotheses**.
 
 ## Adjacent work
 
@@ -29,18 +36,22 @@ workflow applies documented, semantics-preserving evasion variants to positive
 events—including command-line quoting, flag, path, URL, and shell forms—and
 reports the variants that stop an otherwise stable rule from matching.
 
-Ordeal and SigmaMutant both expose gaps that ordinary fixture execution can
-miss, but they change opposite sides of the experiment:
+Ordeal overlaps with SigmaMutant's new event-side direction, while
+SigmaMutant's rule-mutation lane changes the opposite side of the experiment:
 
-| Tool | Held constant | Mutated | Question |
+| Tool / mode | Held constant | Copied and changed | Question |
 | --- | --- | --- | --- |
-| Ordeal | Sigma rule | attacker-controlled event telemetry | Does the rule remain effective across equivalent surface forms? |
-| SigmaMutant | labelled event fixtures | defender-authored rule detection logic | Would the tests catch an accidental rule regression? |
+| Ordeal `mutate` | Sigma rule | adversarial event telemetry | Does the rule remain effective across catalogued equivalent surface forms? |
+| SigmaMutant `run` | labelled fixtures | defender-authored rule detection logic | Would the tests catch an atomic rule regression? |
+| SigmaMutant `gap` | Sigma rule | labelled positive fixture event | Does the pinned evaluator retain the match for a fixed, bounded representation hypothesis? |
 
-These workflows are complementary. Ordeal measures rule robustness against a
-catalog of evasions; SigmaMutant measures fixture-suite sensitivity against a
-catalog of rule defect models. SigmaMutant does not present its current six
-operators as a replacement for Ordeal's telemetry mutators.
+These workflows remain distinct. Ordeal presents a broader adversarial catalog.
+SigmaMutant `gap` ships four conservative, first-order operators over fixture
+copies, emits hashes instead of raw derived values, and deliberately labels a
+match loss a **gap candidate**, not an evasion. It makes no universal
+semantic-equivalence claim. SigmaMutant does not present either its six rule
+operators or four event operators as a replacement for Ordeal's telemetry
+mutators.
 
 ### SPECTRA
 
@@ -48,9 +59,11 @@ operators as a replacement for Ordeal's telemetry mutators.
 command variants for Windows Sigma process-creation rules. It explores
 telemetry-side command variation and rule evasion.
 
-SigmaMutant does not generate commands or modify telemetry. It changes the
-parsed Sigma detection tree using a bounded defect model and asks whether
-labelled fixtures notice.
+SigmaMutant does not generate commands or rewrite source telemetry. `run`
+changes an in-memory Sigma detection-tree copy using a bounded defect model;
+`gap` derives conservative copies from existing positive fixtures. Unlike
+SPECTRA, SigmaMutant does not claim those copies are behavior-preserving
+evasions, and it does not produce an executable command corpus.
 
 ### AMIDES
 
@@ -69,9 +82,10 @@ generates, validates, and optimizes Sigma rules from logs and obfuscation
 techniques. It was presented at Black Hat USA Arsenal 2025.
 
 SigmaMutant starts from an existing rule and its hand-labelled regression
-fixtures. It introduces defects into the rule to measure whether those tests
-protect the intended logic; it does not generate or optimize the production
-rule.
+fixtures. It introduces defects into a rule copy to measure whether those
+tests protect the intended logic, or applies fixed representation operators to
+positive event copies to find evaluator-scoped match losses. It does not
+generate, optimize, or automatically repair the production rule.
 
 ### Atomic Red Team
 
@@ -90,8 +104,15 @@ pipeline used to parse and convert Sigma rules.
 Python dictionaries.
 
 SigmaMutant relies on these semantic foundations rather than presenting a new
-Sigma parser. Its contribution is the mutation-operator registry, baseline
-guard, killed/survived model, deterministic evidence, and CI score contract.
+Sigma parser. Its contribution is the shared baseline guard, separate rule and
+event operator registries, killed/survived and detected/gap-candidate models,
+deterministic evidence, and distinct CI score contracts.
+
+The narrow `pwsh.exe` event operator is grounded in Microsoft's
+[`about_Pwsh`](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_pwsh?view=powershell-7.6)
+documentation for `-EncodedCommand`, `-e`, and `-ec`. That reference supports
+the alias relationship; it does not establish telemetry emission, backend
+equivalence, or a real-world evasion.
 
 ### Local Sigma fixture and backtest utilities
 
@@ -103,10 +124,12 @@ testing and related detection-engineering workflows.
 workflow that evaluates rules against an event corpus and can emit JUnit
 results for CI.
 
-These tools exercise the original rule against supplied events. That is the
-first half of SigmaMutant's workflow. The distinguishing second half generates
-first-order defects in the parsed Sigma rule and tests whether the existing
-fixture corpus detects each change.
+These tools exercise the original rule against supplied events. That is
+SigmaMutant's shared baseline. From there, SigmaMutant can generate first-order
+defects in a parsed rule copy to test fixture sensitivity, or generate a fixed
+set of inert positive-event copies to test evaluator-scoped match retention.
+The latter overlaps with event robustness work and is not claimed as a new
+category by itself.
 
 ### Live Atomic and SIEM regression testing
 
@@ -117,8 +140,10 @@ result through a live SIEM workflow.
 That provides end-to-end evidence across execution, telemetry collection, and
 the target detection backend. SigmaMutant has a narrower offline boundary: it
 does not execute the activity or query a SIEM. It evaluates inert event
-fixtures locally while first-order-mutating the Sigma rule itself. The two
-approaches answer complementary questions.
+fixtures locally while first-order-mutating either a rule copy or, in `gap`, a
+positive event copy. The source inputs remain unchanged. These approaches
+answer complementary questions, and only the live workflow validates the
+actual collection and backend path.
 
 ### sigmalint
 
@@ -126,10 +151,10 @@ approaches answer complementary questions.
 static validation and quality scoring for Sigma rules. It checks the rule
 itself across documented quality dimensions.
 
-SigmaMutant measures a different object: the sensitivity of a user's labelled
-fixture corpus. It mutates the detection document, executes each valid mutant
-against those fixtures, and emits killed/survived evidence. The two approaches
-are complementary.
+SigmaMutant measures different dynamic objects: fixture-corpus sensitivity to
+rule defects and bounded match retention for positive-event variations. It
+does not replace static rule-quality scoring, and a high score in either
+SigmaMutant lane is not a universal rule-quality grade.
 
 ## Research motivation
 
@@ -147,19 +172,22 @@ operator-level evaluation and reproducibility data as it matures.
 
 ## Novelty claim, kept narrow
 
-In a literature and project review refreshed on 2026-08-24, the maintainers
-did not identify an open-source tool exposing this exact end-to-end contract:
+In a literature and project review refreshed on 2026-08-25, the maintainers
+did not identify an open-source tool exposing this exact combined contract:
 
 ```text
 Sigma rule + labelled fixtures
-  -> first-order Sigma detection-tree mutants
-  -> baseline-guarded fixture execution
-  -> killed/survived classification
-  -> deterministic survivor evidence and CI mutation score
+  -> one baseline for every positive and negative label
+  -> lane A: first-order Sigma detection-tree copies
+             -> killed/survived + diffs + CI mutation score
+  -> lane B: fixed, inert positive-event copies
+             -> detected/gap-candidate + value-safe CI variation score
 ```
 
-This is not a legal novelty or trademark opinion. New related work should be
-added here and acknowledged in release notes.
+The novelty claim is about the combined review contract, not event mutation,
+Sigma evaluation, or software mutation testing individually. It is not a legal
+novelty or trademark opinion. New related work should be added here and
+acknowledged in release notes.
 
 ## Design lessons borrowed from software mutation testing
 
@@ -167,9 +195,10 @@ SigmaMutant follows established mutation-testing principles:
 
 - use small, first-order mutations;
 - exclude invalid and duplicate candidates from the score;
-- keep the original program—in this case, the rule—unchanged;
+- keep the source rule and fixture files unchanged;
 - treat equivalent mutants as a known interpretation problem;
 - combine a numeric score with inspectable survivor evidence.
 
 The security-specific work is defining defensible Sigma defect models and
-evaluating them with event semantics.
+conservative event-representation hypotheses, evaluating both with the same
+local event semantics, and keeping their scores and claims separate.

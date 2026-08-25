@@ -72,6 +72,10 @@ def test_ci_covers_supported_platforms_and_built_wheel_on_both_pythons():
     assert "python -m sigmamutant doctor" in wheel_steps
     assert "python -m sigmamutant init-example" in wheel_steps
     assert "python -m sigmamutant validate" in wheel_steps
+    assert "powershell-gap.yml" in wheel_steps
+    assert "powershell-hardened-gap.yml" in wheel_steps
+    assert "weak.returncode == 1" in wheel_steps
+    assert "hardened.returncode == 0" in wheel_steps
 
 
 def test_release_smoke_uses_only_the_wheel_contained_example():
@@ -81,6 +85,9 @@ def test_release_smoke_uses_only_the_wheel_contained_example():
     assert "sigmamutant-release-smoke" in steps
     assert "init-example" in steps
     assert "sigmamutant-example/strong-suite.yml" in steps
+    assert "sigmamutant-example/powershell-gap.yml" in steps
+    assert "sigmamutant-example/powershell-hardened-gap.yml" in steps
+    assert "weak_gap_exit" in steps
     assert "validate examples/strong-suite.yml" not in steps
 
 

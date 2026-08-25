@@ -1,11 +1,12 @@
 # Architecture
 
-SigmaMutant's mutation-testing core is a local command-line pipeline with
-explicit boundaries between input validation, Sigma semantics, mutation
-generation, execution, and report rendering. In v1.0, the optional fixture
-assistant is provider-selectable: Ollama is loopback-only and default, while
-OpenAI remains an explicit cloud path. Neither moves evaluation or scoring
-into the model.
+SigmaMutant's core is a local command-line pipeline with explicit boundaries
+between input validation, Sigma semantics, deterministic rule or event-copy
+generation, evaluation, and report rendering. Rule mutation and event-gap
+analysis share the same suite and baseline contract but have independent
+operators, scores, thresholds, and evidence. The optional fixture assistant is
+provider-selectable: Ollama is loopback-only and default, while OpenAI remains
+an explicit cloud path. Neither deterministic scoring path depends on a model.
 
 ## Data flow
 
@@ -21,28 +22,32 @@ suite.yml
                                    |
                               pass | fail --> stop (exit 2)
                                    v
-                         mutation point discovery
-                                   |
-                                   v
-                      clone -> mutate -> validate
-                                   |
-                         deduplicate and sort
-                                   |
-                                   v
-                         evaluate every mutant
-                                   |
-                                   v
-                        classify and calculate score
-                                   |
                   +----------------+----------------+
-                  v                v                v
-              terminal      machine reports   survivor evidence
-                            JSON/JUnit/HTML      YAML and diff
+                  |                                 |
+                  v                                 v
+       rule mutation discovery           positive-seed discovery
+                  |                                 |
+                  v                                 v
+      clone rule -> mutate -> validate   clone event -> bounded variation
+                  |                                 |
+          deduplicate and sort                deduplicate and sort
+                  |                                 |
+                  v                                 v
+       evaluate every rule mutant       evaluate every event variation
+                  |                                 |
+                  v                                 v
+          killed / survived             detected / gap candidate
+                  |                                 |
+                  +----------------+----------------+
+                                   v
+                         terminal + machine reports
 ```
 
 `validate` stops after supported-subset and baseline evaluation. It does not
 generate mutants, calculate a mutation score, or write run artifacts. `run`
-reuses the same validation path before entering mutation execution.
+and `gap` reuse the same validation path before entering their separate
+execution lanes. `check` aggregates rule mutation only; it does not implicitly
+run event-gap analysis.
 
 ## Repository check flow
 
@@ -100,7 +105,7 @@ parsed rule + JSON event -> Boolean match
 There is no command execution, network request, live query, or backend
 translation in this core path.
 
-### Mutation registry
+### Rule-mutation registry
 
 Each operator exposes:
 
@@ -112,6 +117,29 @@ Each operator exposes:
 
 The registry gives `sigmamutant operators` and the runner the same source of
 truth.
+
+### Event-variation registry
+
+The separate event registry gives `sigmamutant gap-operators` and the gap
+runner one source of truth. Its four operators work only on copies of labelled
+positive fixtures:
+
+- ASCII case only for value-sensitive, non-`cased` `Image` or `ParentImage`
+  predicates;
+- quote-aware `CommandLine` separator normalization or expansion;
+- referenced `Image` or `ParentImage` path collapse to basename;
+- documented `pwsh.exe` encoded-command aliases.
+
+The last operator recognizes only `-EncodedCommand`, `-e`, and `-ec` after a
+small allowlist of full no-value switches and immediately before one final
+lexical Base64 token. These aliases are listed in Microsoft's
+[`about_Pwsh`](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_pwsh?view=powershell-7.6)
+reference. It does not decode, alter, or execute that token.
+
+Every operator records a field, RFC 6901 event path, human description,
+claim-scope statement, before/after values, and complete derived event in the
+in-memory domain object. The value-safe reporters retain only hashes for those
+fixture-derived values.
 
 ### Mutant validator
 
@@ -128,6 +156,15 @@ The runner coordinates baseline evaluation, mutant evaluation, classification,
 and threshold comparison. Domain result objects are kept separate from Rich
 terminal rendering so CLI presentation cannot change scoring behavior.
 
+The gap runner separately coordinates positive-seed variation generation,
+evaluation against the unchanged rule, `detected`/`escaped`/`excluded`
+classification, and comparison with the event-variation threshold. It never
+passes event values to the rule-mutation runner or AI provider.
+
+The gap runner rejects duplicate positive event bodies and applies a
+configurable generation ceiling (`4096` by default). Exceeding the ceiling is
+a technical error; partial enumeration is never scored.
+
 ### Report writers
 
 All formats receive the same completed run model:
@@ -141,6 +178,15 @@ Repository checks additionally produce aggregate JSON, standalone HTML, and
 JUnit while retaining every suite's ordinary report bundle.
 
 Report writers sort records by stable mutant ID and avoid current-time fields.
+
+Gap analysis has its own value-safe writers:
+
+- `gap-report.json` is the canonical machine-readable record;
+- `gap-report.html` is the standalone reviewer view;
+- `gap-junit.xml` maps the separate variant-score gate into CI evidence.
+
+They include fixture IDs, operator/path/claim provenance, statuses and hashes,
+but omit raw source values, replacement values, and derived event bodies.
 
 ### Optional AI fixture assistant
 
@@ -214,9 +260,9 @@ violations, and runs the projected suite. Preview is the default. Only
 symlink path components, and compares exact suite, rule, and fixture snapshots
 again immediately before replacement so concurrent input changes fail closed.
 
-## Stable mutant identity
+## Stable identities
 
-A stable ID is based on content, not enumeration order:
+A stable rule-mutant ID is based on content, not enumeration order:
 
 ```text
 sha256(
@@ -234,10 +280,32 @@ digest in terminal and structured output.
 This design lets a reviewer correlate the same mutation across local and CI
 runs even when unrelated operators are added later.
 
+An event variation uses the same content-addressed principle with a separate
+identity:
+
+```text
+sha256(
+  rule_sha256
+  + source_fixture_id
+  + source_event_sha256
+  + event_operator_name
+  + json_pointer
+  + before_sha256
+  + after_sha256
+  + derived_event_sha256
+)
+```
+
+The displayed ID is likewise a 16-hex-character digest prefix. Enumeration is
+sorted by seed fixture, operator, path, and ID; duplicate derived event bodies
+are removed within each seed, and duplicate positive source bodies are rejected
+before enumeration.
+
 ## Artifact contract
 
-For `run` and `check`, the output directory is the only runtime write target
-requested by the user. For a successful single-suite run it contains:
+For `run`, `check`, and `gap`, the output directory is the only runtime write
+target requested by the user. For a successful single-suite rule-mutation run
+it contains:
 
 ```text
 report.json
@@ -254,6 +322,20 @@ and documented in `report.json`.
 
 An existing output directory is updated only within these known artifact
 names. SigmaMutant does not modify the input rule, suite, or fixtures.
+
+A gap run uses a separate managed namespace:
+
+```text
+gap-report.json
+gap-report.html
+gap-junit.xml
+```
+
+Gap evidence includes input hashes, operator names, dependency versions,
+stable variation provenance, score, threshold, and claim-boundary text. It
+does not serialize raw fixture-derived before/after values or event bodies.
+The complete events exist only in memory during analysis; source fixture bytes
+remain unchanged.
 
 The optional assistant writes one explicitly named JSON evidence file:
 
@@ -272,6 +354,10 @@ service and verifier remain terminal-independent. `--verbose` renders only
 secret-safe metadata: stage names, counts, Boolean outcomes, hashes, provider
 configuration, and token usage. Raw prompts, fixture values, candidate values,
 headers, credentials, and provider bodies are excluded.
+
+Gap progress uses the same renderer and emits only suite filenames, counts,
+fixture IDs, stable variation IDs, operator names, JSON paths, statuses, and
+Boolean match results. It does not emit raw event values.
 
 The Ollama adapter uses JSON mode with the exact output schema embedded in the
 system prompt. Streaming and model thinking are disabled; temperature is zero
@@ -313,6 +399,12 @@ SigmaMutant fails closed:
 - report write failure: reject;
 - below-threshold completed run: quality-gate failure, not execution error.
 
+The event-gap path additionally rejects a corpus without positive seeds and
+returns an error when no shipped safe variation applies. An evaluator
+exception marks the affected variation `excluded` and makes the whole run exit
+`2`; exclusions cannot improve the event-variation score. A completed score
+below `gap`'s independent threshold is exit `1`, not a technical error.
+
 The optional suggestion path also fails closed on an unreachable Ollama
 service, missing Ollama model, missing OpenAI extra or `OPENAI_API_KEY`, absent
 OpenAI cloud consent, unknown mutant, provider failure, malformed provider
@@ -327,11 +419,14 @@ that change during preview or promotion. Without `--write`, successful
 promotion remains a read-only preview.
 
 The CLI maps these states to the exit-code contract documented in the README.
+No gap failure modifies the rule, suite, or fixture inputs.
 
 ## Extension points
 
-Future work can add operators, evaluator adapters, or reports without changing
-the suite format. Larger changes—correlations, multi-document rules,
-placeholder expansion, or backend differential testing—need explicit semantic
-contracts and should not be enabled by quietly broadening the current parser
-gate.
+Future work can add rule operators, carefully scoped event operators, evaluator
+adapters, or reports without changing the suite format. New event operators
+must state their claim scope and preserve the inert-data boundary; a broader
+obfuscation catalog would be a different product contract. Larger changes—
+correlations, multi-document rules, placeholder expansion, automatic repair,
+or backend differential testing—need explicit semantic contracts and should
+not be enabled by quietly broadening the current parser gate.
